@@ -1,8 +1,61 @@
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
+import { IAlert } from '..';
 import SideBar from '../../components/SideBar/SideBar';
 import BannerCardSkeleton from '../../components/skeletons/BannerCardSkeleton';
 import Card from '../../components/Tournament/Card';
+import showToast from '../../helpers/showToast';
+import useAlert from '../../hooks/useAlert';
+import useWallet from '../../hooks/useWallet';
 const DashboardPage = () => {
+	const { alerts } = useAlert();
+	const { connectWallet, tokenBalance, address, loadContract, web3, balance } =
+		useWallet();
+	const router = useRouter();
+
+	const reconnectWallet = async () => {
+		await connectWallet(router);
+	};
+
+	//Handle Notifications
+	useEffect(() => {
+		let mounted = true;
+
+		if (mounted && alerts.length > 0) {
+			alerts.map((alert: IAlert) => showToast(alert.message, alert.type));
+		}
+		return () => {
+			mounted = false;
+		};
+		//eslint-disable-next-line
+	}, [alerts]);
+
+	//Reconnect wallet on page refresh
+	useEffect(() => {
+		let mounted = true;
+
+		if (mounted && localStorage?.getItem('isWalletConnected') === 'true') {
+			reconnectWallet();
+		}
+		return () => {
+			mounted = false;
+		};
+		//eslint-disable-next-line
+	}, []);
+
+	//load contract for connected users
+	useEffect(() => {
+		let mounted = true;
+
+		if (mounted && web3 !== null && address !== '') {
+			loadContract(web3, address);
+		}
+		return () => {
+			mounted = false;
+		};
+		//eslint-disable-next-line
+	}, [web3, address]);
+
 	return (
 		<div>
 			<div className='flex'>
@@ -16,10 +69,10 @@ const DashboardPage = () => {
 						</h3>
 						<div className='mr-4 mt-4'>
 							<button className='border mr-4 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'>
-								2 ETH
+								{Number(balance).toFixed(4)} ETH
 							</button>
 							<button className='border border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'>
-								7 WCT
+								{Number(tokenBalance).toFixed(4)} WCT
 							</button>
 						</div>
 					</div>

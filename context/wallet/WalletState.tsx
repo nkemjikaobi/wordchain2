@@ -11,7 +11,10 @@ import {
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/web3-provider';
-import WordChainJson from '../../artifacts/wordchain.json';
+import wordchainJson from '../../artifacts/wordchain.json';
+import adminJson from '../../artifacts/admin.json';
+import stakingJson from '../../artifacts/staking.json';
+import tokenJson from '../../artifacts/token.json';
 import convertToEther from '../../helpers/convertToEther';
 import useAlert from '../../hooks/useAlert';
 import { NotificationType } from '../../constants';
@@ -26,7 +29,11 @@ const WalletState = (props: any) => {
 		symbol: '',
 		providerOptions: null,
 		web3Modal: null,
-		contract: null,
+		tokenContract: null,
+		adminContract: null,
+		wordChainContract: null,
+		stakingContract: null,
+		tokenBalance: '',
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -34,7 +41,7 @@ const WalletState = (props: any) => {
 	const { setAlert } = useAlert();
 
 	//Connect Wallet on Ethereum Network
-	const connectWallet = async () => {
+	const connectWallet = async (router: any) => {
 		const providerOptions = {
 			walletconnect: {
 				package: WalletConnectProvider, // required
@@ -87,6 +94,7 @@ const WalletState = (props: any) => {
 				count !== '1'
 					? setAlert('Wallet Connected', NotificationType.SUCCESS)
 					: null;
+				router.push('/dashboard');
 			}
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -94,16 +102,38 @@ const WalletState = (props: any) => {
 	};
 
 	//Load Contract
-	const loadContract = async (web3: any) => {
+	const loadContract = async (web3: any, address: any) => {
 		try {
-			const contract = new web3.eth.Contract(
-				WordChainJson,
-				`${process.env.NEXT_PUBLIC_CONTRACT_ADDRESS}`
+			const tokenContract = new web3.eth.Contract(
+				tokenJson,
+				`${process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS}`
 			);
+			const adminContract = new web3.eth.Contract(
+				adminJson,
+				`${process.env.NEXT_PUBLIC_ADMIN_CONTRACT_ADDRESS}`
+			);
+			const stakingContract = new web3.eth.Contract(
+				stakingJson,
+				`${process.env.NEXT_PUBLIC_STAKING_CONTRACT_ADDRESS}`
+			);
+			const wordchainContract = new web3.eth.Contract(
+				wordchainJson,
+				`${process.env.NEXT_PUBLIC_WORDCHAIN_CONTRACT_ADDRESS}`
+			);
+
+			//Get token balance (WCT)
+			const res = await tokenContract.methods.balanceOf(address).call();
+			const tokenBalance = convertToEther(web3, res);
 
 			dispatch({
 				type: LOAD_CONTRACT,
-				payload: contract,
+				payload: {
+					tokenContract,
+					adminContract,
+					stakingContract,
+					wordchainContract,
+					tokenBalance,
+				},
 			});
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -155,7 +185,11 @@ const WalletState = (props: any) => {
 				symbol: state.symbol,
 				providerOptions: state.providerOptions,
 				web3Modal: state.web3Modal,
-				contract: state.contract,
+				tokenContract: state.tokenContract,
+				adminContract: state.contract,
+				wordChainContract: state.wordChainContract,
+				stakingContract: state.stakingContract,
+				tokenBalance: state.tokenBalance,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,

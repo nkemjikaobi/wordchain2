@@ -4,7 +4,7 @@ import WalletContext from '../context/wallet/WalletContext';
 /**
  * This is a hook to return all (functions / methods) and state variables in the wallet context provider
  * Prevents reimports and repititions of useContext and the wallet context
- * @returns 
+ * @returns
  */
 const useWallet = () => {
 	const {
@@ -24,7 +24,11 @@ const useWallet = () => {
 		symbol,
 		providerOptions,
 		web3Modal,
-		contract,
+		tokenContract,
+		adminContract,
+		wordChainContract,
+		stakingContract,
+		tokenBalance,
 	} = useContext(WalletContext);
 
 	return {
@@ -44,7 +48,11 @@ const useWallet = () => {
 		symbol,
 		providerOptions,
 		web3Modal,
-		contract,
+		tokenContract,
+		adminContract,
+		wordChainContract,
+		stakingContract,
+		tokenBalance,
 	};
 };
 
