@@ -27,6 +27,7 @@ const WalletReducer = (state: any, action: any) => {
 				wordChainContract: action.payload.wordchainContract,
 				stakingContract: action.payload.stakingContract,
 				tokenBalance: action.payload.tokenBalance,
+				username: action.payload.username,
 			};
 		case DISCONNECT_WALLET:
 			return {

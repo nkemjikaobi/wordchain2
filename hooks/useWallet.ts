@@ -29,6 +29,7 @@ const useWallet = () => {
 		wordChainContract,
 		stakingContract,
 		tokenBalance,
+		username
 	} = useContext(WalletContext);
 
 	return {
@@ -53,6 +54,7 @@ const useWallet = () => {
 		wordChainContract,
 		stakingContract,
 		tokenBalance,
+		username
 	};
 };
 

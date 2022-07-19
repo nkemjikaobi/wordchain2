@@ -6,6 +6,7 @@ interface IModal {
 	visibility: boolean;
 	children: any;
 	callBack?: Function;
+	isImportant?: boolean;
 }
 
 const Modal = ({
@@ -13,9 +14,10 @@ const Modal = ({
 	visibility,
 	children,
 	callBack,
+	isImportant,
 }: IModal) => {
 	const closeModal = () => {
-		toggleVisibility && toggleVisibility(false);
+		!isImportant && toggleVisibility && toggleVisibility(false);
 		callBack && callBack();
 	};
 
@@ -59,3 +61,7 @@ const Modal = ({
 };
 
 export default Modal;
+
+Modal.defaultProps = {
+	isImportant: false,
+};

@@ -34,6 +34,7 @@ const WalletState = (props: any) => {
 		wordChainContract: null,
 		stakingContract: null,
 		tokenBalance: '',
+		username: '',
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -124,6 +125,9 @@ const WalletState = (props: any) => {
 			//Get token balance (WCT)
 			const res = await tokenContract.methods.balanceOf(address).call();
 			const tokenBalance = convertToEther(web3, res);
+			const username = await wordchainContract.methods
+				.userNames(address)
+				.call();
 
 			dispatch({
 				type: LOAD_CONTRACT,
@@ -133,6 +137,7 @@ const WalletState = (props: any) => {
 					stakingContract,
 					wordchainContract,
 					tokenBalance,
+					username,
 				},
 			});
 		} catch (error) {
@@ -190,6 +195,7 @@ const WalletState = (props: any) => {
 				wordChainContract: state.wordChainContract,
 				stakingContract: state.stakingContract,
 				tokenBalance: state.tokenBalance,
+				username: state.username,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
