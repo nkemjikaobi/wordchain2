@@ -1,6 +1,4 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -63,45 +61,18 @@ const Home: NextPage = () => {
 	useEffect(() => {
 		let mounted = true;
 
-		if (mounted && web3 !== null && address !== '') {
-			loadContract(web3, address);
+		if (mounted && web3 !== null && address !== '' && router) {
+			loadContract(web3, address, router);
 		}
 		return () => {
 			mounted = false;
 		};
 		//eslint-disable-next-line
-	}, [web3, address]);
-
-	// useEffect(() => {
-	// 	let mounted = true;
-
-	// 	if (mounted && address !== '') {
-	// 		checkIfAdmin(adminContract, address);
-	// 	}
-	// 	return () => {
-	// 		mounted = false;
-	// 	};
-	// 	//eslint-disable-next-line
-	// }, [adminContract, isAdmin, address]);
-
-	// useEffect(() => {
-	// 	let mounted = true;
-
-	// 	if (mounted && isAdmin) {
-	// 		router.push('/admin');
-	// 	} else {
-	// 		router.push("/dashboard");
-	// 	}
-		
-	// 	return () => {
-	// 		mounted = false;
-	// 	};
-	// 	//eslint-disable-next-line
-	// }, [isAdmin]);
+	}, [web3, address, router]);
 
 	return (
 		<>
-			<div className='flex justify-between items-center px-48 py-4'>
+			<div className='flex justify-between items-center px-4 lg:px-48 py-4'>
 				<Link href='#'>
 					<a className='font-bold text-[32px]'>
 						<span>Word</span>

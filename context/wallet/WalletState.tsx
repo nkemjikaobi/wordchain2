@@ -14,7 +14,7 @@ import {
 	FETCH_USERS,
 	CURRENT_TOURNAMENT,
 	FETCH_CONTRACT_ETH,
-	FETCH_CONTRACT_TOKENS
+	FETCH_CONTRACT_TOKENS,
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -53,7 +53,6 @@ const WalletState = (props: any) => {
 		contractTokenBalance: '0',
 		isAdmin: false,
 	};
-	
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
 
@@ -64,11 +63,10 @@ const WalletState = (props: any) => {
 			type: CURRENT_TOURNAMENT,
 			payload: tournamentId,
 		});
-	}
+	};
 
 	//Connect Wallet on Ethereum Network
 	const connectWallet = async (router: any) => {
-		
 		const providerOptions = {
 			walletconnect: {
 				package: WalletConnectProvider, // required
@@ -102,8 +100,7 @@ const WalletState = (props: any) => {
 						balance = convertToEther(web3, result);
 					}
 				});
-				
-				
+
 				dispatch({
 					type: CONNECT_WALLET,
 					payload: {
@@ -131,7 +128,7 @@ const WalletState = (props: any) => {
 	};
 
 	//Load Contract
-	const loadContract = async (web3: any, address: any) => {
+	const loadContract = async (web3: any, address: any, router: any) => {
 		try {
 			const tokenContract = new web3.eth.Contract(
 				tokenJson,
@@ -157,6 +154,8 @@ const WalletState = (props: any) => {
 				.userNames(address)
 				.call();
 
+			await checkIfAdmin(adminContract, state.address, router);
+
 			dispatch({
 				type: LOAD_CONTRACT,
 				payload: {
@@ -174,13 +173,35 @@ const WalletState = (props: any) => {
 	};
 
 	//Disconnect wallet
-	const disconnectWallet = async (modal: any, network: string) => {
+	const disconnectWallet = async (modal: any, router: any) => {
+		modal.clearCachedProvider();
 		dispatch({
 			type: DISCONNECT_WALLET,
 		});
 		setAlert('Wallet Disconnected', NotificationType.SUCCESS);
 		localStorage.removeItem('isWalletConnected');
 		localStorage.removeItem('count');
+		router.push('/');
+	};
+
+	const checkIfAdmin = async (contract: any, address: any, router: any) => {
+		try {
+			const res = await contract.methods.admins(address).call();
+
+			dispatch({
+				type: FETCH_ADMINS,
+				payload: res,
+			});
+			if (router.pathname === '/' && state.isConnected === true) {
+				if (res) {
+					router.push('/admin');
+				} else {
+					router.push('dashboard');
+				}
+			}
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
 	};
 
 	//Monitor disconnect
@@ -312,20 +333,6 @@ const WalletState = (props: any) => {
 		try {
 			const res = await contract.methods.getAllAdmins().call();
 
-		
-			dispatch({
-				type: FETCH_ADMINS,
-				payload: res,
-			});
-		} catch (error) {
-			setAlert((error as Error).message, NotificationType.ERROR);
-		}
-	};
-
-	const checkIfAdmin = async (contract: any, address: any) => {
-		try {
-			const res = await contract.methods.admins(address).call();
-
 			dispatch({
 				type: FETCH_ADMINS,
 				payload: res,
@@ -379,7 +386,9 @@ const WalletState = (props: any) => {
 
 	const fetchContractTokenBalance = async (contract: any) => {
 		try {
-			const res = await contract.methods.getTokenBalance(contract._address).call();
+			const res = await contract.methods
+				.getTokenBalance(contract._address)
+				.call();
 
 			dispatch({
 				type: FETCH_CONTRACT_TOKENS,

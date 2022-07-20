@@ -18,11 +18,16 @@ const AdminPage = () => {
 		//eslint-disable-next-line
 	}, [users]);
 
+	const findAveragePlayers = (arr: any) => {
+		const { length } = arr;
+		return arr.reduce((acc: any, val: any) => {
+			return acc + val.numberOfParticipants / length;
+		}, 0);
+	};
+
 	useEffect(() => {
 		if (tournaments && tournaments.length > 0) {
-			const average =
-				tournaments.reduce((a: any, b: any) => a + b.numberOfParticipants, 0) /
-				tournaments.length;
+			const average = findAveragePlayers(tournaments);
 			setAverage(average);
 
 			const pendingPayouts = tournaments.filter(
@@ -66,7 +71,7 @@ const AdminPage = () => {
 					<AdminCard
 						tournament={{
 							item: 'Average Players Per Tournament',
-							amount: average ? average : 0,
+							amount: average ? average.toFixed(0) : 0,
 						}}
 						route={'tournaments'}
 					/>

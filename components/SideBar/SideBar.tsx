@@ -2,9 +2,11 @@ import Link from 'next/link';
 import { FaUsers } from 'react-icons/fa';
 import { BiLogOut } from 'react-icons/bi';
 import { useRouter } from 'next/router';
+import useWallet from '../../hooks/useWallet';
 
 const SideBar = () => {
 	const router = useRouter();
+	const { disconnectWallet, web3Modal } = useWallet();
 	return (
 		<aside className='px-7 py-16 bg-[#040B21] h-full'>
 			<Link href='/dashboard'>
@@ -46,7 +48,7 @@ const SideBar = () => {
 			</Link>
 			<button
 				className='flex items-center mt-16 hover:text-[#498feb] cursor-pointer'
-				onClick={() => router.push('/')}
+				onClick={() => disconnectWallet(web3Modal, router)}
 			>
 				<BiLogOut className='text-2xl mr-4' /> Logout
 			</button>

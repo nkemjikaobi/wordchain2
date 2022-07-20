@@ -3,9 +3,9 @@ import React from 'react';
 
 const HeroSection = () => {
 	return (
-		<div className='flex justify-between items-center px-48 py-4 gap-[50px] min-h-[100vh] bg-[#040B21] text-white relative'>
-			<div className='flex flex-col justify-between w-[50%]'>
-				<h1 className='font-bold text-[3rem] mb-8'>
+		<div className='flex justify-between items-center lg:px-48 py-4 gap-[50px] min-h-[100vh] flex-col lg:flex-row bg-[#040B21] text-white relative'>
+			<div className='flex flex-col justify-between lg:w-[50%] p-4 lg:px-0'>
+				<h1 className='font-bold text-[2.5rem] lg:text-[3rem] mb-8'>
 					<span>Word</span>s, decentralized on the <span>Chain</span>
 				</h1>
 				<p className='mb-4'>

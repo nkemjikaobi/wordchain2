@@ -59,14 +59,14 @@ const BasePageLayout = ({ children }: any) => {
 	useEffect(() => {
 		let mounted = true;
 
-		if (mounted && web3 !== null && address !== '') {
-			loadContract(web3, address);
+		if (mounted && web3 !== null && address !== '' && router) {
+			loadContract(web3, address, router);
 		}
 		return () => {
 			mounted = false;
 		};
 		//eslint-disable-next-line
-	}, [web3, address]);
+	}, [web3, address, router]);
 
 	//check that username is valid
 	useEffect(() => {
