@@ -130,7 +130,7 @@ const WalletState = (props: any) => {
 				`${process.env.NEXT_PUBLIC_WORDCHAIN_CONTRACT_ADDRESS}`
 			);
 
-			console.log(wordchainContract);
+			
 			//Get token balance (WCT)
 			const res = await tokenContract.methods.balanceOf(address).call();
 			const tokenBalance = convertToEther(web3, res);
@@ -191,7 +191,7 @@ const WalletState = (props: any) => {
 
 	//Fetch all tournaments
 	const fetchAllTournaments = async (contract: any) => {
-		console.log(contract);
+		
 		try {
 			const res = await contract.methods.getAllTournaments().call();
 

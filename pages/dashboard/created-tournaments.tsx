@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BasePageLayout from '../../components/BasePageLayout/BasePageLayout';
 import Modal from '../../components/Modal/Modal';
 import CreateTournament from '../../components/modals/CreateTournament';
@@ -7,7 +7,15 @@ import useWallet from '../../hooks/useWallet';
 
 const CreatedTournamentsPage = () => {
 	const [createTournament, setCreatedTournament] = useState<boolean>(false);
-	const { tournaments } = useWallet();
+	
+	const { tournaments, address } = useWallet();
+	const [tournaments_, setTournaments_] = useState<any>();
+
+	useEffect(() => {
+		if(tournaments !== null) {
+			setTournaments_(tournaments.filter((t: any) => t.owner === address))
+		}
+	}, [tournaments])
 
 	return (
 		<BasePageLayout>
@@ -26,16 +34,17 @@ const CreatedTournamentsPage = () => {
 				</div>
 
 				<div className='h-[300px] w-full grid lg:grid-cols-3 gap-4'>
-					{tournaments && tournaments.res && tournaments.res.length > 0 ? (
-						<Card
+					{tournaments_ && tournaments_.length > 0 ? (tournaments_.map((tournament_: any, id: number) => {
+						
+						return <Card
 							tournament={{
-								title: 'Cryp',
-								description: 'The main tournament',
-								numberOfParticipants: 2,
-							}}
-						/>
-					) : (
-						<>There are no tournaments yet...</>
+							name: tournament_.name,
+							description: tournament_.description,
+							numberOfParticipants: tournament_.numberOfParticipants
+						}}
+					/>
+					})) : (
+						<>You have not created a tournament yet...</>
 					)}
 				</div>
 			</div>

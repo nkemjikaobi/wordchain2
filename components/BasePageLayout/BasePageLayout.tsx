@@ -32,7 +32,6 @@ const BasePageLayout = ({ children }: any) => {
 		await connectWallet(router);
 	};
 
-	console.log(wordChainContract);
 
 	//Handle Notifications
 	useEffect(() => {
@@ -93,7 +92,6 @@ const BasePageLayout = ({ children }: any) => {
 		let mounted = true;
 
 		if (mounted && wordChainContract !== null) {
-			console.log(wordChainContract);
 			fetchAllTournaments(wordChainContract);
 		}
 		return () => {
