@@ -46,6 +46,7 @@ const AdminPage = () => {
 							item: 'Users',
 							amount: users && users.length ? users.length : 0,
 						}}
+						route={'users'}
 					/>
 					<AdminCard
 						tournament={{
@@ -53,18 +54,21 @@ const AdminPage = () => {
 							amount:
 								tournaments && tournaments.length ? tournaments.length : 0,
 						}}
+						route={'tournaments'}
 					/>
 					<AdminCard
 						tournament={{
 							item: 'BlackListed Users',
 							amount: blackListedUsers ? blackListedUsers : 0,
 						}}
+						route={'users'}
 					/>
 					<AdminCard
 						tournament={{
 							item: 'Average Players Per Tournament',
 							amount: average ? average : 0,
 						}}
+						route={'tournaments'}
 					/>
 				</div>
 			</div>
@@ -135,7 +139,7 @@ const AdminPage = () => {
 													{tournament.totalStake} WCT
 												</td>
 												<td className='text-[#0E1027]'>
-													{tournament.numberOfParticipants} WCT
+													{tournament.numberOfParticipants}
 												</td>
 											</tr>
 										))}

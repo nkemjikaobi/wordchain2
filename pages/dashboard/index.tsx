@@ -37,16 +37,13 @@ const DashboardPage = () => {
 				<h3 className='text-4xl mb-8 drop-shadow-sm'>
 					Hottest Live Tournaments
 				</h3>
-				<div className='h-[300px] mb-4 grid grid-cols-3'>
+				<div className='h-[300px] mb-4 grid '>
 					{loading ? (
 						<BannerCardSkeleton />
-					) : tournaments && tournaments.length > 0 ? (
-						tournaments.map((tournament: any, index: any) => (
-							<Card tournament={hottestTournament} key={index} />
-						))
-					) : (
-						<>There are no tournaments yet...</>
-					)}
+					) : 
+							<Card tournament={hottestTournament} />
+						
+					}
 				</div>
 				<h3 className='text-4xl drop-shadow-sm mt-16'>Others</h3>
 				<p className='mb-8'>Join a Tournament based on your region</p>

@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import convertToWei from '../../helpers/convertToWei';
 import { NotificationType } from '../../constants';
 
-const CreatedTournament = ({ setCreatedTournament }: any) => {
+const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 	const {
 		wordChainContract,
 		tokenContract,
@@ -101,7 +101,7 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 				wordChainContract,
 				name,
 				description,
-				duration,
+				Number(duration)*60*24,
 				stake,
 				isPrivate,
 				tournamentKey,
@@ -177,7 +177,25 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 					onChange={e => setIsPrivate(e.target.checked)}
 				/>
 			</div>
-			{!hasApproved && (
+			{isAdmin && 
+				 <button
+				 onClick={handleCreate}
+				 className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
+			 >
+				 {loading ? (
+					 <>
+						 <ImSpinner9 className='animate-spin h-5 w-5 mr-3' />
+						 Creating...
+					 </>
+				 ) : (
+					 <>
+						 Create Tournament <BsArrowRight className='ml-4' />
+					 </>
+				 )}
+			 </button>
+
+			}
+			{!isAdmin && !hasApproved && (
 				<button
 					onClick={handleApprove}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
@@ -194,7 +212,7 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 					)}
 				</button>
 			)}
-			{hasApproved && !hasStaked && (
+			{!isAdmin && hasApproved && !hasStaked && (
 				<button
 					onClick={handleStake}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
@@ -211,7 +229,7 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 					)}
 				</button>
 			)}
-			{hasApproved && hasStaked && (
+			{!isAdmin && hasApproved && hasStaked && (
 				<button
 					onClick={handleCreate}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'

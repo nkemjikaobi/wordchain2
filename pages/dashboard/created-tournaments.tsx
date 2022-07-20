@@ -9,8 +9,16 @@ import useWallet from '../../hooks/useWallet';
 
 const CreatedTournamentsPage = () => {
 	const [createTournament, setCreatedTournament] = useState<boolean>(false);
-	const { tournaments } = useWallet();
 	const [loading, setLoading] = useState<boolean>(true);
+	
+	const { tournaments, address } = useWallet();
+	const [tournaments_, setTournaments_] = useState<any>();
+
+	useEffect(() => {
+		if(tournaments !== null) {
+			setTournaments_(tournaments.filter((t: any) => t.owner === address))
+		}
+	}, [tournaments]);
 
 	useEffect(() => {
 		if (tournaments) {
@@ -38,14 +46,20 @@ const CreatedTournamentsPage = () => {
 				</div>
 
 				<div className='h-[300px] w-full grid lg:grid-cols-3 gap-4'>
-					{loading ? (
-						range(6).map((data, index) => <CardSkeleton key={index} />)
-					) : tournaments && tournaments.length > 0 ? (
-						tournaments.map((tournament: any, index: any) => (
-							<Card tournament={tournament} key={index} />
-						))
-					) : (
-						<>There are no tournaments yet...</>
+					{loading && (
+							range(6).map((data, index) => <CardSkeleton key={index} />)
+						)}
+					{!loading && tournaments_ && tournaments_.length > 0 ? (tournaments_.map((tournament_: any, id: number) => {
+						
+						return <Card key ={id}
+							tournament={{
+							name: tournament_.name,
+							description: tournament_.description,
+							numberOfParticipants: tournament_.numberOfParticipants
+						}}
+					/>
+					})) : (
+						<>You have not created a tournament yet...</>
 					)}
 				</div>
 			</div>
@@ -53,7 +67,7 @@ const CreatedTournamentsPage = () => {
 				visibility={createTournament}
 				toggleVisibility={setCreatedTournament}
 			>
-				<CreateTournament setCreatedTournament={setCreatedTournament} />
+				<CreateTournament setCreatedTournament={setCreatedTournament} isAdmin={false} />
 			</Modal>
 		</BasePageLayout>
 	);

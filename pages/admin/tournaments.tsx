@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
 import AdminPageLayout from '../../components/AdminPageLayout/AdminPageLayout';
+import Modal from '../../components/Modal/Modal';
+import CreateTournament from '../../components/modals/CreateTournament';
 import useWallet from '../../hooks/useWallet';
 import moment from 'moment';
 import Moment from 'react-moment';
 
 const Tournaments = () => {
+	const [createTournament, setCreatedTournament] = useState<boolean>(false);
 	const { tournaments, web3 } = useWallet();
 	const [loading, setLoading] = useState<boolean>(true);
 
@@ -21,7 +24,18 @@ const Tournaments = () => {
 		<AdminPageLayout>
 			<div className='grid  gap-12 mb-12'>
 				<div className='drop-shadow-lg'>
-					<h2 className='text-2xl mb-8 mt-12'>Tournaments</h2>
+					<div className='flex items-center justify-between'>
+						<div>
+							<h2 className='text-2xl mb-8 mt-12'>Tournaments</h2>
+						</div>
+						<button
+							onClick={() => setCreatedTournament(true)}
+							className='border whitespace-nowrap mr-4 border-[#0E1027] p-3 bg-[#0E1027] text-white w-48 rounded-md uppercase'
+						>
+							create tournament
+						</button>
+					</div>
+					
 					{loading ? (
 						<div className='flex justify-center items-center flex-col'>
 							<ImSpinner9 className='animate-spin text-5xl' />
@@ -75,6 +89,12 @@ const Tournaments = () => {
 					)}
 				</div>
 			</div>
+			<Modal
+				visibility={createTournament}
+				toggleVisibility={setCreatedTournament}
+			>
+				<CreateTournament setCreatedTournament={setCreatedTournament} isAdmin={true} />
+			</Modal>
 		</AdminPageLayout>
 	);
 };
