@@ -14,7 +14,9 @@ const CreatedTournamentsPage = () => {
 
 	useEffect(() => {
 		if (tournaments) {
-			setLoading(false);
+			setTimeout(() => {
+				setLoading(false);
+			}, 2500);
 		}
 		//eslint-disable-next-line
 	}, [tournaments]);

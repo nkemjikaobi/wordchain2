@@ -24,7 +24,9 @@ const JoinedTournamentsPage = () => {
 	}, [wordChainContract]);
 	useEffect(() => {
 		if (joinedTournaments) {
-			setLoading(false);
+			setTimeout(() => {
+				setLoading(false);
+			}, 2500);
 		}
 		//eslint-disable-next-line
 	}, [joinedTournaments]);
