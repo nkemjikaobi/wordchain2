@@ -39,8 +39,9 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 			return showToast('Please fill in all fields', 'error');
 		}
 
+		console.log({tokenBalance, stake: tournament.stake})
 		const { stake } = tournament;
-		if (tokenBalance < stake) return showToast('Insufficent tokens', 'error');
+		if (Number(tokenBalance) < Number(stake)) return showToast('Insufficent tokens', 'error');
 
 		setLoading(true);
 		try {
@@ -66,7 +67,7 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 		}
 
 		const { stake, tournamentKey } = tournament;
-		if (tokenBalance < stake) return showToast('Insufficent tokens', 'error');
+		if (Number(tokenBalance) < Number(stake)) return showToast('Insufficent tokens', 'error');
 
 		setLoading(true);
 		try {
@@ -92,7 +93,7 @@ const CreatedTournament = ({ setCreatedTournament }: any) => {
 		}
 
 		const { stake, tournamentKey, name, duration, description } = tournament;
-		if (tokenBalance < stake) return showToast('Insufficent tokens', 'error');
+		// if (tokenBalance < stake) return showToast('Insufficent tokens', 'error');
 
 		setLoading(true);
 		try {

@@ -23,12 +23,16 @@ const BasePageLayout = ({ children }: any) => {
 		username,
 		fetchAllTournaments,
 		tournaments,
+		fetchAdmins,
+		admins,
 	} = useWallet();
 	const router = useRouter();
 
 	const reconnectWallet = async () => {
 		await connectWallet(router);
 	};
+
+	console.log(wordChainContract);
 
 	//Handle Notifications
 	useEffect(() => {
@@ -89,6 +93,7 @@ const BasePageLayout = ({ children }: any) => {
 		let mounted = true;
 
 		if (mounted && wordChainContract !== null) {
+			console.log(wordChainContract);
 			fetchAllTournaments(wordChainContract);
 		}
 		return () => {

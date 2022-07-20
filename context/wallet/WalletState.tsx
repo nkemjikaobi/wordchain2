@@ -10,6 +10,7 @@ import {
 	FETCH_ALL_TOURNAMENTS,
 	FETCH_ALL_PLAYERS,
 	FETCH_JOINED_TOURNAMENTS,
+	FETCH_ADMINS
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -41,6 +42,7 @@ const WalletState = (props: any) => {
 		tournaments: null,
 		players: null,
 		joinedTournaments: null,
+		admins: null,
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -104,7 +106,7 @@ const WalletState = (props: any) => {
 				//router.push('/dashboard');
 			}
 		} catch (error) {
-			setAlert((error as Error).message, NotificationType.ERROR);
+			// setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
 
@@ -128,6 +130,7 @@ const WalletState = (props: any) => {
 				`${process.env.NEXT_PUBLIC_WORDCHAIN_CONTRACT_ADDRESS}`
 			);
 
+			console.log(wordchainContract);
 			//Get token balance (WCT)
 			const res = await tokenContract.methods.balanceOf(address).call();
 			const tokenBalance = convertToEther(web3, res);
@@ -147,7 +150,7 @@ const WalletState = (props: any) => {
 				},
 			});
 		} catch (error) {
-			setAlert((error as Error).message, NotificationType.ERROR);
+			// setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
 
@@ -185,24 +188,27 @@ const WalletState = (props: any) => {
 		});
 	};
 
+
 	//Fetch all tournaments
 	const fetchAllTournaments = async (contract: any) => {
+		console.log(contract);
 		try {
-			const res = await contract.getPastEvents('CreateTournament', {
-				fromBlock: 0,
-			});
+			const res = await contract.methods.getAllTournaments().call();
 
 			let tournaments: any = [];
 			res.map((dat: any) => {
 				let item: any = {};
-				item.id = dat.returnValues.tournamentId;
-				item.name = dat.returnValues.name;
-				item.description = dat.returnValues.description;
-				item.deadline = dat.returnValues.deadline;
-				item.minimumStake = dat.returnValues.minimumStake;
-				item.isPrivate = dat.returnValues.isPrivate;
-				item.startDate = dat.returnValues.startDate;
-				item.owner = dat.returnValues.owner;
+				item.id = dat.id;
+				item.name = dat.name;
+				item.description = dat.description;
+				item.deadline = dat.deadline;
+				item.minimumStakeAmount = convertToEther(state.web3, dat.minimumStakeAmount);
+				item.isPrivate = dat.isPrivate;
+				item.owner = dat.owner;
+				item.tournamentKey = dat.tournamentKey;
+				item.numberOfParticipants = dat.numberOfParticipants;
+				item.createdAt = dat.createdAt;
+				item.isAdminCreated = dat.isAdminCreated;
 				tournaments.push(item);
 			});
 
@@ -211,6 +217,7 @@ const WalletState = (props: any) => {
 				payload: tournaments,
 			});
 		} catch (error) {
+			
 			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
@@ -274,6 +281,22 @@ const WalletState = (props: any) => {
 			dispatch({
 				type: FETCH_ALL_PLAYERS,
 				payload: players,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	const fetchAdmins = async (contract: any) => {
+		try {
+			const res = await contract.methods
+				.getAllAdmins()
+				.call();
+			
+				console.log(res);
+			dispatch({
+				type: FETCH_ADMINS,
+				payload: res,
 			});
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -350,6 +373,7 @@ const WalletState = (props: any) => {
 				tournaments: state.tournaments,
 				players: state.players,
 				joinedTournaments: state.joinedTournaments,
+				admins: state.admins,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
@@ -360,6 +384,7 @@ const WalletState = (props: any) => {
 				joinTournament,
 				fetchAllPlayers,
 				fetchJoinedTournaments,
+				fetchAdmins,
 			}}
 		>
 			{props.children}
