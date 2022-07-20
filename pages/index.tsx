@@ -23,8 +23,11 @@ const Home: NextPage = () => {
 		monitorDisconnect,
 		provider,
 		loadContract,
+		adminContract,
 		web3,
 		address,
+		checkIfAdmin,
+		isAdmin,
 	} = useWallet();
 	const router = useRouter();
 	const { alerts } = useAlert();
@@ -68,6 +71,33 @@ const Home: NextPage = () => {
 		};
 		//eslint-disable-next-line
 	}, [web3, address]);
+
+	// useEffect(() => {
+	// 	let mounted = true;
+
+	// 	if (mounted && address !== '') {
+	// 		checkIfAdmin(adminContract, address);
+	// 	}
+	// 	return () => {
+	// 		mounted = false;
+	// 	};
+	// 	//eslint-disable-next-line
+	// }, [adminContract, isAdmin, address]);
+
+	// useEffect(() => {
+	// 	let mounted = true;
+
+	// 	if (mounted && isAdmin) {
+	// 		router.push('/admin');
+	// 	} else {
+	// 		router.push("/dashboard");
+	// 	}
+		
+	// 	return () => {
+	// 		mounted = false;
+	// 	};
+	// 	//eslint-disable-next-line
+	// }, [isAdmin]);
 
 	return (
 		<>

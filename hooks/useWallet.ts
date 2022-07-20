@@ -20,6 +20,12 @@ const useWallet = () => {
 		fetchAllPlayers,
 		fetchJoinedTournaments,
 		fetchAdmins,
+		fetchAllUsers,
+		setCurrentTournament,
+		sendScore,
+		fetchContractTokenBalance,
+		fetchContractEthBalance,
+		checkIfAdmin,
 
 		//state variables
 		address,
@@ -40,6 +46,11 @@ const useWallet = () => {
 		players,
 		joinedTournaments,
 		admins,
+		users,
+		currentTournament,
+		contractEthBalance,
+		contractTokenBalance,
+		isAdmin,
 	} = useContext(WalletContext);
 
 	return {
@@ -55,6 +66,12 @@ const useWallet = () => {
 		fetchAllPlayers,
 		fetchJoinedTournaments,
 		fetchAdmins,
+		fetchAllUsers,
+		setCurrentTournament,
+		sendScore,
+		fetchContractTokenBalance,
+		fetchContractEthBalance,
+		checkIfAdmin,
 
 		//state variables
 		address,
@@ -74,7 +91,12 @@ const useWallet = () => {
 		tournaments,
 		players,
 		joinedTournaments,
-		admins
+		admins,
+		users,
+		currentTournament,
+		contractEthBalance,
+		contractTokenBalance,
+		isAdmin,
 	};
 };
 

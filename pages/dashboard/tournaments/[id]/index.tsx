@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import BasePageLayout from '../../../../components/BasePageLayout/BasePageLayout';
 import useWallet from '../../../../hooks/useWallet';
@@ -13,11 +14,12 @@ const SingleTournamentPage = ({ id }: any) => {
 		}
 		//eslint-disable-next-line
 	}, [wordChainContract]);
+	const router = useRouter();
 	return (
 		<BasePageLayout>
 			<div className='w-[900px] mx-auto'>
 				<div className='mt-16 mr-4 pl-10'>
-					<h3 className='text-7xl text-center mb-8 drop-shadow-sm'>
+					{/* <h3 className='text-7xl text-center mb-8 drop-shadow-sm'>
 						{tournaments && tournaments[id].name}
 					</h3>
 					<p className='text-center'>
@@ -25,7 +27,7 @@ const SingleTournamentPage = ({ id }: any) => {
 					</p>
 					<p className='text-center'>
 						Number of Participants: <span>{players && players.length}</span>
-					</p>
+					</p> */}
 				</div>
 				{players ? (
 					<table className='table-auto mt-8 w-full '>
@@ -59,7 +61,12 @@ const SingleTournamentPage = ({ id }: any) => {
 				) : (
 					<div>There are currently no players...</div>
 				)}
-				<button className='border mt-8 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'>
+				<button
+					onClick={() => {
+						router.push('/dashboard/game/play');
+					}}
+					className='border mt-8 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'
+				>
 					start game
 				</button>
 			</div>

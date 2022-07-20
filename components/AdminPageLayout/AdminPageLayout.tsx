@@ -4,24 +4,26 @@ import showToast from '../../helpers/showToast';
 import useAlert from '../../hooks/useAlert';
 import useWallet from '../../hooks/useWallet';
 import { IAlert } from '../../pages';
-import Modal from '../Modal/Modal';
-import BuyToken from '../modals/BuyToken';
-import SaveUser from '../modals/SaveUser';
-import SideBar from '../SideBar/SideBar';
-import Card from '../Tournament/Card';
+import AdminSideBar from '../AdminSideBar/AdminSideBar';
 
-const BasePageLayout = ({ children }: any) => {
+const AdminPageLayout = ({ children }: any) => {
 	const { alerts } = useAlert();
 	const {
 		connectWallet,
-		tokenBalance,
 		address,
 		loadContract,
 		web3,
 		balance,
 		wordChainContract,
-		username,
+		stakingContract,
+		fetchAllUsers,
+		adminContract,
+		fetchAdmins,
 		fetchAllTournaments,
+		fetchContractTokenBalance,
+		fetchContractEthBalance,
+		contractEthBalance,
+		contractTokenBalance,
 	} = useWallet();
 	const router = useRouter();
 
@@ -68,27 +70,13 @@ const BasePageLayout = ({ children }: any) => {
 		//eslint-disable-next-line
 	}, [web3, address]);
 
-	//check that username is valid
-	useEffect(() => {
-		let mounted = true;
-
-		if (mounted && wordChainContract !== null && username === '') {
-			setSaveUser(true);
-		} else {
-			setSaveUser(false);
-		}
-		return () => {
-			mounted = false;
-		};
-		//eslint-disable-next-line
-	}, [username, wordChainContract]);
-
-	//fetch all tournaments
+	//fetch all tournaments and users
 	useEffect(() => {
 		let mounted = true;
 
 		if (mounted && wordChainContract !== null) {
 			fetchAllTournaments(wordChainContract);
+			fetchAllUsers(wordChainContract);
 		}
 		return () => {
 			mounted = false;
@@ -96,37 +84,58 @@ const BasePageLayout = ({ children }: any) => {
 		//eslint-disable-next-line
 	}, [wordChainContract]);
 
-	const [saveUser, setSaveUser] = useState(false);
-	const [buyToken, setBuyToken] = useState(false);
-	const [newUsername, setNewUserName] = useState('');
-	const [toggleImportance, setToggleImportance] = useState(true);
+	useEffect(() => {
+		let mounted = true;
+
+		if (mounted && adminContract !== null) {
+			fetchAdmins(adminContract);
+		}
+		return () => {
+			mounted = false;
+		};
+		//eslint-disable-next-line
+	}, [adminContract]);
+
+	useEffect(() => {
+		let mounted = true;
+
+		if (mounted && stakingContract !== null) {
+			fetchContractEthBalance(stakingContract);
+			fetchContractTokenBalance(stakingContract);
+		}
+		return () => {
+			mounted = false;
+		};
+		//eslint-disable-next-line
+	}, [stakingContract]);
+
 	return (
 		<>
 			<div>
 				<div className='flex'>
 					<div className='hidden md:block md:bg-black md:text-white md:min-h-[100vh] w-[300px]'>
-						<SideBar />
+						<AdminSideBar />
 					</div>
 					<div className='ml-4 tablet:ml-0 md:w-[calc(100vw-300px)]'>
 						<div className='flex items-center justify-between'>
 							<h3 className='mt-8 text-2xl'>
-								Hello ,
-								{username && (
-									<span className='text-purple-700'>{username} 😌</span>
-								)}
+								Hello ,<span className='text-purple-700'>admin 😌</span>
 							</h3>
-							<div className='mr-4 mt-4 flex lg:block'>
-								<button
-									onClick={() => setBuyToken(true)}
-									className='border mr-4 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'
-								>
-									buy token
+							<div className='mr-4 mt-4 lg:block'>
+								<p>Contract Tokens</p>
+								<button className='border mr-4 border-[#0E1027] p-3 text-[#0E1027]  w-48 rounded-md uppercase'>
+									{Number(contractTokenBalance).toFixed(2)} WCT
 								</button>
+							</div>
+							<div className='mr-4 mt-4 lg:block'>
+								<p>Contract ETH</p>
+								<button className='border mr-4 border-[#0E1027] p-3 text-[#0E1027]  w-48 rounded-md uppercase'>
+									{Number(contractEthBalance).toFixed(4)} ETH
+								</button>
+							</div>
+							<div className='mr-4 mt-4 flex lg:block'>
 								<button className='border mr-4 border-[#0E1027] p-3 text-[#0E1027]  w-32 rounded-md uppercase'>
 									{Number(balance).toFixed(4)} ETH
-								</button>
-								<button className='border border-[#0E1027] p-3 text-[#0E1027]  w-32 rounded-md uppercase'>
-									{Number(tokenBalance).toFixed(4)} WCT
 								</button>
 							</div>
 						</div>
@@ -134,23 +143,8 @@ const BasePageLayout = ({ children }: any) => {
 					</div>
 				</div>
 			</div>
-			<Modal
-				visibility={saveUser}
-				toggleVisibility={setSaveUser}
-				isImportant={toggleImportance}
-			>
-				<SaveUser
-					setSaveUser={setSaveUser}
-					newUsername={newUsername}
-					setNewUserName={setNewUserName}
-					setToggleImportance={setToggleImportance}
-				/>
-			</Modal>
-			<Modal visibility={buyToken} toggleVisibility={setSaveUser}>
-				<BuyToken setBuyToken={setBuyToken} />
-			</Modal>
 		</>
 	);
 };
 
-export default BasePageLayout;
+export default AdminPageLayout;

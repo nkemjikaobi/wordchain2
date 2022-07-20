@@ -10,7 +10,11 @@ import {
 	FETCH_ALL_TOURNAMENTS,
 	FETCH_ALL_PLAYERS,
 	FETCH_JOINED_TOURNAMENTS,
-	FETCH_ADMINS
+	FETCH_ADMINS,
+	FETCH_USERS,
+	CURRENT_TOURNAMENT,
+	FETCH_CONTRACT_ETH,
+	FETCH_CONTRACT_TOKENS
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -39,18 +43,32 @@ const WalletState = (props: any) => {
 		stakingContract: null,
 		tokenBalance: '',
 		username: '',
-		tournaments: null,
-		players: null,
-		joinedTournaments: null,
-		admins: null,
+		tournaments: [],
+		players: [],
+		joinedTournaments: [],
+		admins: [],
+		users: [],
+		currentTournament: -1,
+		contractEthBalance: '0',
+		contractTokenBalance: '0',
+		isAdmin: false,
 	};
+	
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
 
 	const { setAlert } = useAlert();
 
+	const setCurrentTournament = (tournamentId: any) => {
+		dispatch({
+			type: CURRENT_TOURNAMENT,
+			payload: tournamentId,
+		});
+	}
+
 	//Connect Wallet on Ethereum Network
 	const connectWallet = async (router: any) => {
+		
 		const providerOptions = {
 			walletconnect: {
 				package: WalletConnectProvider, // required
@@ -84,6 +102,8 @@ const WalletState = (props: any) => {
 						balance = convertToEther(web3, result);
 					}
 				});
+				
+				
 				dispatch({
 					type: CONNECT_WALLET,
 					payload: {
@@ -106,7 +126,7 @@ const WalletState = (props: any) => {
 				//router.push('/dashboard');
 			}
 		} catch (error) {
-			// setAlert((error as Error).message, NotificationType.ERROR);
+			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
 
@@ -130,7 +150,6 @@ const WalletState = (props: any) => {
 				`${process.env.NEXT_PUBLIC_WORDCHAIN_CONTRACT_ADDRESS}`
 			);
 
-			
 			//Get token balance (WCT)
 			const res = await tokenContract.methods.balanceOf(address).call();
 			const tokenBalance = convertToEther(web3, res);
@@ -150,7 +169,7 @@ const WalletState = (props: any) => {
 				},
 			});
 		} catch (error) {
-			// setAlert((error as Error).message, NotificationType.ERROR);
+			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
 
@@ -188,10 +207,8 @@ const WalletState = (props: any) => {
 		});
 	};
 
-
 	//Fetch all tournaments
 	const fetchAllTournaments = async (contract: any) => {
-		
 		try {
 			const res = await contract.methods.getAllTournaments().call();
 
@@ -202,7 +219,11 @@ const WalletState = (props: any) => {
 				item.name = dat.name;
 				item.description = dat.description;
 				item.deadline = dat.deadline;
-				item.minimumStakeAmount = convertToEther(state.web3, dat.minimumStakeAmount);
+				item.minimumStakeAmount = convertToEther(
+					state.web3,
+					dat.minimumStakeAmount
+				);
+				item.totalStake = convertToEther(state.web3, dat.totalStake);
 				item.isPrivate = dat.isPrivate;
 				item.owner = dat.owner;
 				item.tournamentKey = dat.tournamentKey;
@@ -217,7 +238,6 @@ const WalletState = (props: any) => {
 				payload: tournaments,
 			});
 		} catch (error) {
-			
 			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
@@ -241,8 +261,9 @@ const WalletState = (props: any) => {
 				item.description = dat.description;
 				item.deadline = dat.deadline;
 				item.minimumStakeAmount = convertToEther(web3, dat.minimumStakeAmount);
-				item.totalStake = dat.totalStake;
+				item.totalStake = convertToEther(web3, dat.totalStake);
 				item.tournamentKey = dat.tournamentKey;
+				item.numberOfParticipants = dat.numberOfParticipants;
 				item.name = dat.name;
 				item.owner = dat.owner;
 				tournaments.push(item);
@@ -289,14 +310,80 @@ const WalletState = (props: any) => {
 
 	const fetchAdmins = async (contract: any) => {
 		try {
-			const res = await contract.methods
-				.getAllAdmins()
-				.call();
-			
-				console.log(res);
+			const res = await contract.methods.getAllAdmins().call();
+
+		
 			dispatch({
 				type: FETCH_ADMINS,
 				payload: res,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	const checkIfAdmin = async (contract: any, address: any) => {
+		try {
+			const res = await contract.methods.admins(address).call();
+
+			dispatch({
+				type: FETCH_ADMINS,
+				payload: res,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	const fetchAllUsers = async (contract: any) => {
+		try {
+			const res = await contract.getPastEvents('CreateUser', { fromBlock: 0 });
+			const blacklist = await contract.getPastEvents('BlackList', {
+				fromBlock: 0,
+			});
+			let users: any[] = [];
+
+			res.forEach((dat: any) => {
+				let item: any = {};
+				item.username = dat.returnValues.userName;
+				item.address = dat.returnValues.userAddress;
+				item.isBlacklisted = false;
+				blacklist.forEach((t: any) => {
+					if (t.returnValues.user === dat.userAddress) {
+						item.isBlacklisted = true;
+					}
+				});
+				users.push(item);
+			});
+			dispatch({
+				type: FETCH_USERS,
+				payload: users,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	const fetchContractEthBalance = async (contract: any) => {
+		try {
+			const res = await contract.methods.getETHBalance().call();
+
+			dispatch({
+				type: FETCH_CONTRACT_ETH,
+				payload: convertToEther(state.web3, res),
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	const fetchContractTokenBalance = async (contract: any) => {
+		try {
+			const res = await contract.methods.getTokenBalance(contract._address).call();
+
+			dispatch({
+				type: FETCH_CONTRACT_TOKENS,
+				payload: convertToEther(state.web3, res),
 			});
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -353,6 +440,23 @@ const WalletState = (props: any) => {
 		}
 	};
 
+	const sendScore = async (
+		contract: any,
+		address: any,
+		tournamentId: any,
+		score: any,
+		playerId: any
+	) => {
+		try {
+			await contract.methods.sendScore(tournamentId, score, playerId).send({
+				from: address,
+			});
+			setAlert('Score saved', NotificationType.SUCCESS);
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
 	return (
 		<WalletContext.Provider
 			value={{
@@ -365,7 +469,7 @@ const WalletState = (props: any) => {
 				providerOptions: state.providerOptions,
 				web3Modal: state.web3Modal,
 				tokenContract: state.tokenContract,
-				adminContract: state.contract,
+				adminContract: state.adminContract,
 				wordChainContract: state.wordChainContract,
 				stakingContract: state.stakingContract,
 				tokenBalance: state.tokenBalance,
@@ -374,6 +478,11 @@ const WalletState = (props: any) => {
 				players: state.players,
 				joinedTournaments: state.joinedTournaments,
 				admins: state.admins,
+				users: state.users,
+				currentTournament: state.currentTournament,
+				contractEthBalance: state.contractEthBalance,
+				contractTokenBalance: state.contractTokenBalance,
+				isAdmin: state.isAdmin,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
@@ -385,6 +494,12 @@ const WalletState = (props: any) => {
 				fetchAllPlayers,
 				fetchJoinedTournaments,
 				fetchAdmins,
+				fetchAllUsers,
+				setCurrentTournament,
+				sendScore,
+				fetchContractTokenBalance,
+				fetchContractEthBalance,
+				checkIfAdmin,
 			}}
 		>
 			{props.children}

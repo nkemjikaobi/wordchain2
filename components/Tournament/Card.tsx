@@ -7,9 +7,13 @@ import JoinTournament from '../modals/JoinTournament';
 import { ImSpinner9 } from 'react-icons/im';
 import { BsArrowRight } from 'react-icons/bs';
 
+import WalletReducer from '../../context/wallet/WalletReducer';
+import { CURRENT_TOURNAMENT } from '../../context/types';
+
 const Card = ({ tournament }: any) => {
+
 	const router = useRouter();
-	const { address, wordChainContract } = useWallet();
+	const { address, wordChainContract, setCurrentTournament } = useWallet();
 	const [joinTournament, setJoinTournament] = useState<boolean>(false);
 	const [loading, setLoading] = useState(false);
 
@@ -23,6 +27,7 @@ const Card = ({ tournament }: any) => {
 			setLoading(false);
 		} else {
 			router.push(`/dashboard/tournaments/${tournament.id}`);
+			setCurrentTournament(tournament.id);
 		}
 	};
 

@@ -1,12 +1,15 @@
+import { range } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import BasePageLayout from '../../components/BasePageLayout/BasePageLayout';
 import Modal from '../../components/Modal/Modal';
 import CreateTournament from '../../components/modals/CreateTournament';
+import CardSkeleton from '../../components/skeletons/CardSkeleton';
 import Card from '../../components/Tournament/Card';
 import useWallet from '../../hooks/useWallet';
 
 const CreatedTournamentsPage = () => {
 	const [createTournament, setCreatedTournament] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
 	
 	const { tournaments, address } = useWallet();
 	const [tournaments_, setTournaments_] = useState<any>();
@@ -15,7 +18,16 @@ const CreatedTournamentsPage = () => {
 		if(tournaments !== null) {
 			setTournaments_(tournaments.filter((t: any) => t.owner === address))
 		}
-	}, [tournaments])
+	}, [tournaments]);
+
+	useEffect(() => {
+		if (tournaments) {
+			setTimeout(() => {
+				setLoading(false);
+			}, 2500);
+		}
+		//eslint-disable-next-line
+	}, [tournaments]);
 
 	return (
 		<BasePageLayout>
@@ -34,9 +46,12 @@ const CreatedTournamentsPage = () => {
 				</div>
 
 				<div className='h-[300px] w-full grid lg:grid-cols-3 gap-4'>
-					{tournaments_ && tournaments_.length > 0 ? (tournaments_.map((tournament_: any, id: number) => {
+					{loading && (
+							range(6).map((data, index) => <CardSkeleton key={index} />)
+						)}
+					{!loading && tournaments_ && tournaments_.length > 0 ? (tournaments_.map((tournament_: any, id: number) => {
 						
-						return <Card
+						return <Card key ={id}
 							tournament={{
 							name: tournament_.name,
 							description: tournament_.description,
@@ -52,7 +67,7 @@ const CreatedTournamentsPage = () => {
 				visibility={createTournament}
 				toggleVisibility={setCreatedTournament}
 			>
-				<CreateTournament setCreatedTournament={setCreatedTournament} />
+				<CreateTournament setCreatedTournament={setCreatedTournament} isAdmin={false} />
 			</Modal>
 		</BasePageLayout>
 	);

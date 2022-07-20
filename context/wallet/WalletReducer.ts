@@ -7,7 +7,12 @@ import {
 	FETCH_ALL_TOURNAMENTS,
 	FETCH_ALL_PLAYERS,
 	FETCH_JOINED_TOURNAMENTS,
-	FETCH_ADMINS
+	FETCH_ADMINS,
+	FETCH_USERS,
+	CURRENT_TOURNAMENT,
+	FETCH_CONTRACT_ETH,
+	FETCH_CONTRACT_TOKENS,
+	CHECK_ADMIN
 } from '../types';
 
 const WalletReducer = (state: any, action: any) => {
@@ -73,11 +78,36 @@ const WalletReducer = (state: any, action: any) => {
 				...state,
 				admins: action.payload,
 			};
+		case FETCH_USERS:
+			return {
+				...state,
+				users: action.payload,
+			};
 		case FETCH_JOINED_TOURNAMENTS:
 			return {
 				...state,
 				joinedTournaments: action.payload,
 			};
+		case CURRENT_TOURNAMENT:
+			return {
+				...state,
+				currentTournament: action.payload,
+			};
+		case FETCH_CONTRACT_ETH:
+			return {
+				...state,
+				contractEthBalance: action.payload,
+			};
+		case FETCH_CONTRACT_TOKENS:
+			return {
+				...state,
+				contractTokenBalance: action.payload,
+			};
+		case CHECK_ADMIN:
+		return {
+			...state,
+			isAdmin: action.payload,
+		};
 		default:
 			return state;
 	}
