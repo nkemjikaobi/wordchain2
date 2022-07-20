@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import BasePageLayout from '../../../../components/BasePageLayout/BasePageLayout';
 import useWallet from '../../../../hooks/useWallet';
@@ -13,6 +14,7 @@ const SingleTournamentPage = ({ id }: any) => {
 		}
 		//eslint-disable-next-line
 	}, [wordChainContract]);
+	const router = useRouter();
 	return (
 		<BasePageLayout>
 			<div className='w-[900px] mx-auto'>
@@ -59,7 +61,12 @@ const SingleTournamentPage = ({ id }: any) => {
 				) : (
 					<div>There are currently no players...</div>
 				)}
-				<button className='border mt-8 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'>
+				<button
+					onClick={() => {
+						router.push('/dashboard/game/play');
+					}}
+					className='border mt-8 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'
+				>
 					start game
 				</button>
 			</div>
