@@ -101,7 +101,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 				wordChainContract,
 				name,
 				description,
-				duration,
+				Number(duration)*60*24,
 				stake,
 				isPrivate,
 				tournamentKey,
