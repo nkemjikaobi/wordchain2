@@ -12,29 +12,21 @@ const DashboardPage = () => {
 					Hottest Live Tournaments
 				</h3>
 				<div className='h-[300px] mb-4'>
-					{tournaments && tournaments.res && tournaments.res.length > 0 ? (
-						<Card
-							tournament={{
-								title: 'Cryp',
-								description: 'The main tournament',
-								numberOfParticipants: 2,
-							}}
-						/>
+					{tournaments ? (
+						tournaments.map((tournament: any, index: any) => (
+							<Card tournament={tournament} key={index} />
+						))
 					) : (
 						<>There are no tournaments yet...</>
 					)}
 				</div>
 				<h3 className='text-4xl drop-shadow-sm mt-16'>Country Tournaments</h3>
 				<p className='mb-8'>Join a Tournament based on your region</p>
-				<div className='h-[300px] w-full grid grid-cols-3 gap-4'>
-					{tournaments && tournaments.res && tournaments.res.length > 0 ? (
-						<Card
-							tournament={{
-								title: 'Cryp',
-								description: 'The main tournament',
-								numberOfParticipants: 2,
-							}}
-						/>
+				<div className='h-[300px] w-full grid lg:grid-cols-3 gap-4'>
+					{tournaments ? (
+						tournaments.map((tournament: any, index: any) => (
+							<Card tournament={tournament} key={index} />
+						))
 					) : (
 						<>There are no tournaments yet...</>
 					)}

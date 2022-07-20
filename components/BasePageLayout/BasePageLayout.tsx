@@ -108,7 +108,7 @@ const BasePageLayout = ({ children }: any) => {
 					<div className='hidden md:block md:bg-black md:text-white md:min-h-[100vh] w-[300px]'>
 						<SideBar />
 					</div>
-					<div className='ml-4 tablet:ml-0 w-[calc(100vw-300px)]'>
+					<div className='ml-4 tablet:ml-0 md:w-[calc(100vw-300px)]'>
 						<div className='flex items-center justify-between'>
 							<h3 className='mt-8 text-2xl'>
 								Hello ,
@@ -116,17 +116,17 @@ const BasePageLayout = ({ children }: any) => {
 									<span className='text-purple-700'>{username} 😌</span>
 								)}
 							</h3>
-							<div className='mr-4 mt-4'>
+							<div className='mr-4 mt-4 flex lg:block'>
 								<button
 									onClick={() => setBuyToken(true)}
 									className='border mr-4 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'
 								>
 									buy token
 								</button>
-								<button className='border mr-4 border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'>
+								<button className='border mr-4 border-[#0E1027] p-3 text-[#0E1027]  w-32 rounded-md uppercase'>
 									{Number(balance).toFixed(4)} ETH
 								</button>
-								<button className='border border-[#0E1027] p-3 bg-[#0E1027] text-white w-32 rounded-md uppercase'>
+								<button className='border border-[#0E1027] p-3 text-[#0E1027]  w-32 rounded-md uppercase'>
 									{Number(tokenBalance).toFixed(4)} WCT
 								</button>
 							</div>

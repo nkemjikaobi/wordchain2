@@ -25,7 +25,7 @@ const CreatedTournamentsPage = () => {
 					</button>
 				</div>
 
-				<div className='h-[300px] w-full grid grid-cols-3 gap-4'>
+				<div className='h-[300px] w-full grid lg:grid-cols-3 gap-4'>
 					{tournaments && tournaments.res && tournaments.res.length > 0 ? (
 						<Card
 							tournament={{

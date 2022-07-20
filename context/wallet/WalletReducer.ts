@@ -5,6 +5,8 @@ import {
 	MONITOR_DISCONNECT,
 	LOAD_CONTRACT,
 	FETCH_ALL_TOURNAMENTS,
+	FETCH_ALL_PLAYERS,
+	FETCH_JOINED_TOURNAMENTS,
 } from '../types';
 
 const WalletReducer = (state: any, action: any) => {
@@ -59,6 +61,16 @@ const WalletReducer = (state: any, action: any) => {
 			return {
 				...state,
 				tournaments: action.payload,
+			};
+		case FETCH_ALL_PLAYERS:
+			return {
+				...state,
+				players: action.payload,
+			};
+		case FETCH_JOINED_TOURNAMENTS:
+			return {
+				...state,
+				joinedTournaments: action.payload,
 			};
 		default:
 			return state;

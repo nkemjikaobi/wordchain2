@@ -8,6 +8,8 @@ import {
 	MONITOR_DISCONNECT,
 	LOAD_CONTRACT,
 	FETCH_ALL_TOURNAMENTS,
+	FETCH_ALL_PLAYERS,
+	FETCH_JOINED_TOURNAMENTS,
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -37,6 +39,8 @@ const WalletState = (props: any) => {
 		tokenBalance: '',
 		username: '',
 		tournaments: null,
+		players: null,
+		joinedTournaments: null,
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -188,11 +192,88 @@ const WalletState = (props: any) => {
 				fromBlock: 0,
 			});
 
+			let tournaments: any = [];
+			res.map((dat: any) => {
+				let item: any = {};
+				item.id = dat.returnValues.tournamentId;
+				item.name = dat.returnValues.name;
+				item.description = dat.returnValues.description;
+				item.deadline = dat.returnValues.deadline;
+				item.minimumStake = dat.returnValues.minimumStake;
+				item.isPrivate = dat.returnValues.isPrivate;
+				item.startDate = dat.returnValues.startDate;
+				item.owner = dat.returnValues.owner;
+				tournaments.push(item);
+			});
+
 			dispatch({
 				type: FETCH_ALL_TOURNAMENTS,
-				payload: {
-					res,
-				},
+				payload: tournaments,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	//Fetch joined tournaments
+	const fetchJoinedTournaments = async (
+		contract: any,
+		address: any,
+		web3: Web3
+	) => {
+		try {
+			const res = await contract.methods.getTournamentsJoined(address).call();
+
+			let tournaments: any = [];
+			res.map((dat: any) => {
+				let item: any = {};
+				item.id = dat.id;
+				item.isAdminCreated = dat.isAdminCreated;
+				item.createdAt = dat.createdAt;
+				item.isPrivate = dat.isPrivate;
+				item.description = dat.description;
+				item.deadline = dat.deadline;
+				item.minimumStakeAmount = convertToEther(web3, dat.minimumStakeAmount);
+				item.totalStake = dat.totalStake;
+				item.tournamentKey = dat.tournamentKey;
+				item.name = dat.name;
+				item.owner = dat.owner;
+				tournaments.push(item);
+			});
+
+			dispatch({
+				type: FETCH_JOINED_TOURNAMENTS,
+				payload: tournaments,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	//Fetch all players
+	const fetchAllPlayers = async (contract: any, tournamentId: any) => {
+		try {
+			const res = await contract.methods
+				.getTournamentPlayers(tournamentId)
+				.call();
+
+			let players: any = [];
+			res.map((dat: any) => {
+				let item: any = {};
+				item.id = dat.id;
+				item.username = dat.username;
+				item.score =
+					Number(dat.gamesPlayed) === 0
+						? 0
+						: Number(dat.score) / Number(dat.gamesPlayed);
+				item.gamesPlayed = dat.gamesPlayed;
+				item.address = dat.add_;
+				players.push(item);
+			});
+
+			dispatch({
+				type: FETCH_ALL_PLAYERS,
+				payload: players,
 			});
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -223,8 +304,27 @@ const WalletState = (props: any) => {
 				.send({
 					from: address,
 				});
+			await fetchAllTournaments(state.contract);
 			setAlert('Tournament Created', NotificationType.SUCCESS);
-			//todo get tournaments
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	//join tournament
+	const joinTournament = async (
+		contract: any,
+		tournamentId: any,
+		tournamentKey: any,
+		address: any,
+		router: any
+	) => {
+		try {
+			await contract.methods.joinTournament(tournamentId, tournamentKey).send({
+				from: address,
+			});
+			setAlert('Tournament Joined', NotificationType.SUCCESS);
+			router.push(`/dashboard/tournaments/${tournamentId}`);
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
 		}
@@ -248,6 +348,8 @@ const WalletState = (props: any) => {
 				tokenBalance: state.tokenBalance,
 				username: state.username,
 				tournaments: state.tournaments,
+				players: state.players,
+				joinedTournaments: state.joinedTournaments,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
@@ -255,6 +357,9 @@ const WalletState = (props: any) => {
 				loadContract,
 				fetchAllTournaments,
 				createTournament,
+				joinTournament,
+				fetchAllPlayers,
+				fetchJoinedTournaments,
 			}}
 		>
 			{props.children}
