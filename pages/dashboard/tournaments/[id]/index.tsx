@@ -17,7 +17,7 @@ const SingleTournamentPage = ({ id }: any) => {
 		<BasePageLayout>
 			<div className='w-[900px] mx-auto'>
 				<div className='mt-16 mr-4 pl-10'>
-					<h3 className='text-7xl text-center mb-8 drop-shadow-sm'>
+					{/* <h3 className='text-7xl text-center mb-8 drop-shadow-sm'>
 						{tournaments && tournaments[id].name}
 					</h3>
 					<p className='text-center'>
@@ -25,7 +25,7 @@ const SingleTournamentPage = ({ id }: any) => {
 					</p>
 					<p className='text-center'>
 						Number of Participants: <span>{players && players.length}</span>
-					</p>
+					</p> */}
 				</div>
 				{players ? (
 					<table className='table-auto mt-8 w-full '>

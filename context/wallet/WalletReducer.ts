@@ -7,7 +7,8 @@ import {
 	FETCH_ALL_TOURNAMENTS,
 	FETCH_ALL_PLAYERS,
 	FETCH_JOINED_TOURNAMENTS,
-	FETCH_ADMINS
+	FETCH_ADMINS,
+	FETCH_USERS
 } from '../types';
 
 const WalletReducer = (state: any, action: any) => {
@@ -72,6 +73,11 @@ const WalletReducer = (state: any, action: any) => {
 			return {
 				...state,
 				admins: action.payload,
+			};
+		case FETCH_USERS:
+			return {
+				...state,
+				users: action.payload,
 			};
 		case FETCH_JOINED_TOURNAMENTS:
 			return {

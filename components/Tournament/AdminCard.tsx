@@ -11,8 +11,8 @@ const AdminCard = ({ tournament }: any) => {
 			className={`w-full cursor-pointer h-full  bg-[#040B21] px-4 py-8  rounded-lg text-white flex items-center justify-center !drop-shadow-[200px]`}
 		>
 			<div className=''>
-				<p className='text-7xl font-bold'>{tournament.amount}</p>
-				<p className='text-center mt-4 uppercase text-2xl'>{tournament.item}</p>
+				<p className='text-7xl text-center font-bold'>{tournament.amount}</p>
+				<p className='text-center mt-4 uppercase'>{tournament.item}</p>
 			</div>
 		</div>
 	);

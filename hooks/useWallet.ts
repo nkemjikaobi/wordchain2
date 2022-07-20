@@ -20,6 +20,7 @@ const useWallet = () => {
 		fetchAllPlayers,
 		fetchJoinedTournaments,
 		fetchAdmins,
+		fetchAllUsers,
 
 		//state variables
 		address,
@@ -40,6 +41,7 @@ const useWallet = () => {
 		players,
 		joinedTournaments,
 		admins,
+		users,
 	} = useContext(WalletContext);
 
 	return {
@@ -55,6 +57,7 @@ const useWallet = () => {
 		fetchAllPlayers,
 		fetchJoinedTournaments,
 		fetchAdmins,
+		fetchAllUsers,
 
 		//state variables
 		address,
@@ -74,7 +77,8 @@ const useWallet = () => {
 		tournaments,
 		players,
 		joinedTournaments,
-		admins
+		admins,
+		users
 	};
 };
 

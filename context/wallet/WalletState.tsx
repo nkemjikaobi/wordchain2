@@ -10,7 +10,9 @@ import {
 	FETCH_ALL_TOURNAMENTS,
 	FETCH_ALL_PLAYERS,
 	FETCH_JOINED_TOURNAMENTS,
-	FETCH_ADMINS
+	FETCH_ADMINS,
+	FETCH_USERS,
+	FETCH_BLACKLISTED_USERS,
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -43,6 +45,7 @@ const WalletState = (props: any) => {
 		players: [],
 		joinedTournaments: [],
 		admins: [],
+		users: [],
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -130,7 +133,6 @@ const WalletState = (props: any) => {
 				`${process.env.NEXT_PUBLIC_WORDCHAIN_CONTRACT_ADDRESS}`
 			);
 
-			console.log(wordchainContract);
 			//Get token balance (WCT)
 			const res = await tokenContract.methods.balanceOf(address).call();
 			const tokenBalance = convertToEther(web3, res);
@@ -188,7 +190,6 @@ const WalletState = (props: any) => {
 		});
 	};
 
-
 	//Fetch all tournaments
 	const fetchAllTournaments = async (contract: any) => {
 		try {
@@ -201,7 +202,11 @@ const WalletState = (props: any) => {
 				item.name = dat.name;
 				item.description = dat.description;
 				item.deadline = dat.deadline;
-				item.minimumStakeAmount = convertToEther(state.web3, dat.minimumStakeAmount);
+				item.minimumStakeAmount = convertToEther(
+					state.web3,
+					dat.minimumStakeAmount
+				);
+				item.totalStake = convertToEther(state.web3, dat.totalStake);
 				item.isPrivate = dat.isPrivate;
 				item.owner = dat.owner;
 				item.tournamentKey = dat.tournamentKey;
@@ -216,7 +221,6 @@ const WalletState = (props: any) => {
 				payload: tournaments,
 			});
 		} catch (error) {
-			
 			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
@@ -240,8 +244,9 @@ const WalletState = (props: any) => {
 				item.description = dat.description;
 				item.deadline = dat.deadline;
 				item.minimumStakeAmount = convertToEther(web3, dat.minimumStakeAmount);
-				item.totalStake = dat.totalStake;
+				item.totalStake = convertToEther(web3, dat.totalStake);
 				item.tournamentKey = dat.tournamentKey;
+				item.numberOfParticipants = dat.numberOfParticipants;
 				item.name = dat.name;
 				item.owner = dat.owner;
 				tournaments.push(item);
@@ -288,14 +293,41 @@ const WalletState = (props: any) => {
 
 	const fetchAdmins = async (contract: any) => {
 		try {
-			const res = await contract.methods
-				.getAllAdmins()
-				.call();
-			
-				console.log(res);
+			const res = await contract.methods.getAllAdmins().call();
+
+			console.log(res);
 			dispatch({
 				type: FETCH_ADMINS,
 				payload: res,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	const fetchAllUsers = async (contract: any) => {
+		try {
+			const res = await contract.getPastEvents('CreateUser', { fromBlock: 0 });
+			const blacklist = await contract.getPastEvents('BlackList', {
+				fromBlock: 0,
+			});
+			let users: any[] = [];
+
+			res.forEach((dat: any) => {
+				let item: any = {};
+				item.username = dat.returnValues.userName;
+				item.address = dat.returnValues.userAddress;
+				item.isBlacklisted = false;
+				blacklist.forEach((t: any) => {
+					if (t.returnValues.user === dat.userAddress) {
+						item.isBlacklisted = true;
+					}
+				});
+				users.push(item);
+			});
+			dispatch({
+				type: FETCH_USERS,
+				payload: users,
 			});
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -364,7 +396,7 @@ const WalletState = (props: any) => {
 				providerOptions: state.providerOptions,
 				web3Modal: state.web3Modal,
 				tokenContract: state.tokenContract,
-				adminContract: state.contract,
+				adminContract: state.adminContract,
 				wordChainContract: state.wordChainContract,
 				stakingContract: state.stakingContract,
 				tokenBalance: state.tokenBalance,
@@ -373,6 +405,7 @@ const WalletState = (props: any) => {
 				players: state.players,
 				joinedTournaments: state.joinedTournaments,
 				admins: state.admins,
+				users: state.users,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
@@ -384,6 +417,7 @@ const WalletState = (props: any) => {
 				fetchAllPlayers,
 				fetchJoinedTournaments,
 				fetchAdmins,
+				fetchAllUsers,
 			}}
 		>
 			{props.children}
