@@ -39,10 +39,10 @@ const WalletState = (props: any) => {
 		stakingContract: null,
 		tokenBalance: '',
 		username: '',
-		tournaments: null,
-		players: null,
-		joinedTournaments: null,
-		admins: null,
+		tournaments: [],
+		players: [],
+		joinedTournaments: [],
+		admins: [],
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -106,7 +106,7 @@ const WalletState = (props: any) => {
 				//router.push('/dashboard');
 			}
 		} catch (error) {
-			// setAlert((error as Error).message, NotificationType.ERROR);
+			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
 
@@ -150,7 +150,7 @@ const WalletState = (props: any) => {
 				},
 			});
 		} catch (error) {
-			// setAlert((error as Error).message, NotificationType.ERROR);
+			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	};
 
@@ -191,7 +191,6 @@ const WalletState = (props: any) => {
 
 	//Fetch all tournaments
 	const fetchAllTournaments = async (contract: any) => {
-		console.log(contract);
 		try {
 			const res = await contract.methods.getAllTournaments().call();
 
