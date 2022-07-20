@@ -14,6 +14,8 @@ const useWallet = () => {
 		monitorAccountChanged,
 		monitorDisconnect,
 		loadContract,
+		fetchAllTournaments,
+		createTournament,
 
 		//state variables
 		address,
@@ -29,7 +31,8 @@ const useWallet = () => {
 		wordChainContract,
 		stakingContract,
 		tokenBalance,
-		username
+		username,
+		tournaments,
 	} = useContext(WalletContext);
 
 	return {
@@ -39,6 +42,8 @@ const useWallet = () => {
 		monitorAccountChanged,
 		monitorDisconnect,
 		loadContract,
+		fetchAllTournaments,
+		createTournament,
 
 		//state variables
 		address,
@@ -54,7 +59,8 @@ const useWallet = () => {
 		wordChainContract,
 		stakingContract,
 		tokenBalance,
-		username
+		username,
+		tournaments,
 	};
 };
 

@@ -7,6 +7,7 @@ import {
 	MONITOR_ACCOUNT_CHANGED,
 	MONITOR_DISCONNECT,
 	LOAD_CONTRACT,
+	FETCH_ALL_TOURNAMENTS,
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -35,6 +36,7 @@ const WalletState = (props: any) => {
 		stakingContract: null,
 		tokenBalance: '',
 		username: '',
+		tournaments: null,
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -95,7 +97,7 @@ const WalletState = (props: any) => {
 				count !== '1'
 					? setAlert('Wallet Connected', NotificationType.SUCCESS)
 					: null;
-				router.push('/dashboard');
+				//router.push('/dashboard');
 			}
 		} catch (error) {
 			setAlert((error as Error).message, NotificationType.ERROR);
@@ -179,6 +181,55 @@ const WalletState = (props: any) => {
 		});
 	};
 
+	//Fetch all tournaments
+	const fetchAllTournaments = async (contract: any) => {
+		try {
+			const res = await contract.getPastEvents('CreateTournament', {
+				fromBlock: 0,
+			});
+
+			dispatch({
+				type: FETCH_ALL_TOURNAMENTS,
+				payload: {
+					res,
+				},
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
+	//create tournament
+	const createTournament = async (
+		contract: any,
+		name: any,
+		description: any,
+		duration: any,
+		stake: any,
+		isPrivate: any,
+		tournamentKey: any,
+		address: any
+	) => {
+		try {
+			await contract.methods
+				.createTournament(
+					name,
+					description,
+					duration,
+					stake,
+					isPrivate,
+					tournamentKey
+				)
+				.send({
+					from: address,
+				});
+			setAlert('Tournament Created', NotificationType.SUCCESS);
+			//todo get tournaments
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	};
+
 	return (
 		<WalletContext.Provider
 			value={{
@@ -196,11 +247,14 @@ const WalletState = (props: any) => {
 				stakingContract: state.stakingContract,
 				tokenBalance: state.tokenBalance,
 				username: state.username,
+				tournaments: state.tournaments,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
 				monitorDisconnect,
 				loadContract,
+				fetchAllTournaments,
+				createTournament,
 			}}
 		>
 			{props.children}

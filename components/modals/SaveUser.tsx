@@ -14,8 +14,8 @@ const SaveUser = ({
 	setToggleImportance,
 }: any) => {
 	const { wordChainContract, address } = useWallet();
-    const [loading, setLoading] = useState<boolean>(false);
-    const router = useRouter();
+	const [loading, setLoading] = useState<boolean>(false);
+	const router = useRouter();
 
 	const handleClick = async () => {
 		await checkIfUserNameExists(newUsername);
@@ -30,16 +30,18 @@ const SaveUser = ({
 				.checkIfUsernameExists(username)
 				.call();
 			if (res) {
-				showToast('Username already exists', 'info');
-				setToggleImportance(false);
-				return setSaveUser(false);
+				setLoading(false);
+				return showToast(
+					`${username} is taken, try another`,
+					NotificationType.ERROR
+				);
 			} else {
 				await wordChainContract.methods
 					.createUser(username)
 					.send({ from: address });
 				showToast('Username Created', NotificationType.SUCCESS);
-                setLoading(false);
-                router.reload();
+				setLoading(false);
+				router.reload();
 				setToggleImportance(false);
 				return setSaveUser(false);
 			}
@@ -66,7 +68,7 @@ const SaveUser = ({
 			</div>
 			<button
 				onClick={handleClick}
-				className='flex justify-center items-center mt-10 bg-[#4B60B0] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
+				className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
 			>
 				{loading ? (
 					<>
