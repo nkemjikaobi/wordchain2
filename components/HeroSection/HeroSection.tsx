@@ -3,7 +3,7 @@ import React from 'react';
 
 const HeroSection = () => {
 	return (
-		<div className='flex justify-between items-center px-48 py-4 gap-[50px] min-h-[70vh] bg-[#040B21] text-white relative'>
+		<div className='flex justify-between items-center px-48 py-4 gap-[50px] min-h-[100vh] bg-[#040B21] text-white relative'>
 			<div className='flex flex-col justify-between w-[50%]'>
 				<h1 className='font-bold text-[3rem] mb-8'>
 					<span>Word</span>s, decentralized on the <span>Chain</span>
