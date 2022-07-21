@@ -24,7 +24,7 @@ const CreatedTournamentsPage = () => {
 		if (tournaments) {
 			setTimeout(() => {
 				setLoading(false);
-			}, 2500);
+			}, 4000);
 		}
 		//eslint-disable-next-line
 	}, [tournaments]);
@@ -49,18 +49,14 @@ const CreatedTournamentsPage = () => {
 					{loading && (
 							range(6).map((data, index) => <CardSkeleton key={index} />)
 						)}
-					{!loading && tournaments_ && tournaments_.length > 0 ? (tournaments_.map((tournament_: any, id: number) => {
+					{!loading && (tournaments_ && tournaments_.length > 0 ? (tournaments_.map((tournament_: any, id: number) => {
 						
 						return <Card key ={id}
-							tournament={{
-							name: tournament_.name,
-							description: tournament_.description,
-							numberOfParticipants: tournament_.numberOfParticipants
-						}}
+							tournament={tournament_}
 					/>
 					})) : (
 						<>You have not created a tournament yet...</>
-					)}
+					))}
 				</div>
 			</div>
 			<Modal

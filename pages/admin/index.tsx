@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import AdminPageLayout from '../../components/AdminPageLayout/AdminPageLayout';
 import AdminCard from '../../components/Tournament/AdminCard';
 import useWallet from '../../hooks/useWallet';
+import useAlert from '../../hooks/useAlert';
+import { NotificationType } from '../../constants';
 const AdminPage = () => {
-	const { users, tournaments } = useWallet();
+	const { users, tournaments, wordChainContract, fetchAllPlayers, address } = useWallet();
 	const [blackListedUsers, setBlackListedUsers] = useState();
 	const [pendingPayout, setPendingPayouts] = useState([]);
 	const [average, setAverage] = useState(0);
+	const { setAlert } = useAlert();
 
 	useEffect(() => {
 		if (users && users.length > 0) {
@@ -39,6 +42,62 @@ const AdminPage = () => {
 
 		//eslint-disable-next-line
 	}, [tournaments]);
+
+	const handlePayout = async (tournament: any) => {
+
+		try {
+			let res_ = await wordChainContract.methods.getTournamentPlayers(tournament.id).call();
+			let res: any[] = [];
+			res_.filter((t:any) => Number(t.gamesPlayed) > 0).map((dat: any) => {
+				let item: any = {};
+				item.id = dat.id;
+				item.username = dat.username;
+				item.score =
+					Number(dat.gamesPlayed) === 0
+						? 0
+						: Number(dat.score) / Number(dat.gamesPlayed);
+				item.gamesPlayed = Number(dat.gamesPlayed);
+				item.address = dat.add_;
+				res.push(item);
+			});
+			
+			if (res.length === 0) {alert("No player in this tournament"); return;}
+			console.log(res);
+			let worthy = res.filter((r: any) => r.gamesPlayed >= 20);
+			let playerstoReward: any[];
+
+			if (worthy.length === 0) {
+				if(res.length === 1) playerstoReward = res.map((t: any) => t.add_);
+				else if (res.length === 2) {
+					let test = res.sort((a: any, b: any)=> b.score - a.score)
+						.map((t: any) => t.add_);
+					playerstoReward = test;
+					playerstoReward.push(test[1]);
+				}
+				else playerstoReward = res.sort((a: any, b: any)=> b.score - a.score)
+					.map((t: any) => t.add_).slice(0, 3);
+				
+			} else if (worthy.length === 1) {
+				playerstoReward = Array.from({length: 3}).fill(worthy.map((t: any) => t.add_)[0]);
+				
+			} else if (worthy.length === 2) {
+				let test = worthy.sort((a: any, b: any) => b.score - a.score)
+					.map((t: any) => t.add_);
+				playerstoReward = test;
+				playerstoReward.push(test[1]);
+			} else {
+				playerstoReward = worthy.sort((a: any, b: any) => b.score - a.score)
+					.map((t: any) => t.add_).slice(0,3);
+			}
+			console.log(playerstoReward);
+			console.log(address);
+			await wordChainContract.methods.dispatchRewards(tournament.id, playerstoReward[0], playerstoReward[1], playerstoReward[2])
+				.send({from: address});
+		} catch(error) {
+			console.log("Error");
+			// setAlert((error as Error).message, NotificationType.ERROR);
+		}
+	}
 
 	return (
 		<AdminPageLayout>
@@ -101,7 +160,7 @@ const AdminPage = () => {
 												{tournament.totalStake} WCT
 											</td>
 											<td className='text-[#0E1027]'>
-												<button className='border border-[#0E1027] py-1 bg-[#0E1027] text-white w-24 rounded-md uppercase'>
+												<button onClick={() => handlePayout(tournament)} className='border border-[#0E1027] py-1 bg-[#0E1027] text-white w-24 rounded-md uppercase'>
 													PAYOUT
 												</button>
 											</td>

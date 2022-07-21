@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
-import AdminPageLayout from '../../components/AdminPageLayout/AdminPageLayout';
-import Modal from '../../components/Modal/Modal';
-import CreateTournament from '../../components/modals/CreateTournament';
-import useWallet from '../../hooks/useWallet';
+import AdminPageLayout from '../../../components/AdminPageLayout/AdminPageLayout';
+import Modal from '../../../components/Modal/Modal';
+import CreateTournament from '../../../components/modals/CreateTournament';
+import useWallet from '../../../hooks/useWallet';
 import moment from 'moment';
 import Moment from 'react-moment';
+import { useRouter } from 'next/router';
 
 const Tournaments = () => {
 	const [createTournament, setCreatedTournament] = useState<boolean>(false);
 	const { tournaments, web3 } = useWallet();
 	const [loading, setLoading] = useState<boolean>(true);
+	const router = useRouter();
 
 	useEffect(() => {
 		if (tournaments) {
@@ -59,7 +61,8 @@ const Tournaments = () => {
 								{tournaments.map((tournament: any, index: number) => (
 									<tr
 										key={index}
-										className='border-b-2 h-16 hover:bg-gray-200 text-gray-600 text-center'
+										onClick= {()=> router.push(`/admin/tournaments/${tournament.id}`)}
+										className='border-b-2 h-16 hover:bg-gray-200 text-gray-600 text-center cursor-pointer'
 									>
 										<td className='text-[#0E1027]'>{tournament.name}</td>
 										<td className='text-[#0E1027]'>{tournament.description}</td>

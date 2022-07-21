@@ -12,7 +12,8 @@ import {
 	CURRENT_TOURNAMENT,
 	FETCH_CONTRACT_ETH,
 	FETCH_CONTRACT_TOKENS,
-	CHECK_ADMIN
+	CHECK_ADMIN,
+	FETCH_TOKEN_PRICE
 } from '../types';
 
 const WalletReducer = (state: any, action: any) => {
@@ -108,6 +109,11 @@ const WalletReducer = (state: any, action: any) => {
 			...state,
 			isAdmin: action.payload,
 		};
+		case FETCH_TOKEN_PRICE:
+			return {
+				...state,
+				tokenPrice: action.payload,
+			};
 		default:
 			return state;
 	}

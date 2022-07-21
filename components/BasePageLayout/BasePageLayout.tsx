@@ -104,7 +104,7 @@ const BasePageLayout = ({ children }: any) => {
 		<>
 			<div>
 				<div className='flex'>
-					<div className='hidden md:block md:bg-black md:text-white md:min-h-[100vh] w-[300px]'>
+					<div className='hidden md:block md:bg-black md:text-white md:min-h-[150vh] w-[300px]'>
 						<SideBar />
 					</div>
 					<div className='ml-4 tablet:ml-0 md:w-[calc(100vw-300px)]'>
@@ -146,7 +146,7 @@ const BasePageLayout = ({ children }: any) => {
 					setToggleImportance={setToggleImportance}
 				/>
 			</Modal>
-			<Modal visibility={buyToken} toggleVisibility={setSaveUser}>
+			<Modal visibility={buyToken} toggleVisibility={setBuyToken}>
 				<BuyToken setBuyToken={setBuyToken} />
 			</Modal>
 		</>

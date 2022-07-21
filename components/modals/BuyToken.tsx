@@ -8,7 +8,7 @@ import { ImSpinner9 } from 'react-icons/im';
 import convertToWei from '../../helpers/convertToWei';
 
 const BuyToken = ({ setBuyToken }: any) => {
-	const { stakingContract, address, web3 } = useWallet();
+	const { stakingContract, address, web3, tokenPrice } = useWallet();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [amount, setAmount] = useState('0.01');
 
@@ -30,7 +30,7 @@ const BuyToken = ({ setBuyToken }: any) => {
 		<div className='flex flex-col justify-center items-center'>
 			<Dialog.Title
 				as='h4'
-				className='mb-4 text-base tablet:text-2xl font-bold mt-8'
+				className='mb-4 text-[2rem] tablet:text-2xl font-bold mt-8'
 			>
 				Buy Token
 			</Dialog.Title>
@@ -38,7 +38,7 @@ const BuyToken = ({ setBuyToken }: any) => {
 				as='h4'
 				className='mb-4 text-base tablet:text-2xl font-bold mt-8'
 			>
-				20 WCT = 1 ETH
+				{tokenPrice} WCT = 1 ETH
 			</Dialog.Title>
 			<div className='w-full'>
 				<input
@@ -61,7 +61,7 @@ const BuyToken = ({ setBuyToken }: any) => {
 					</>
 				) : (
 					<>
-						Buy {Number(amount) * 20} WCT <BsArrowRight className='ml-4' />
+						Buy {Number(amount) * tokenPrice} WCT <BsArrowRight className='ml-4' />
 					</>
 				)}
 			</button>

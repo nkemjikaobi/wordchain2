@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 
 const JoinTournament = ({
 	setJoinTournament,
-	tournament: tournamentt,
+	tournamentt,
 }: any) => {
 	const {
 		wordChainContract,
@@ -122,7 +122,7 @@ const JoinTournament = ({
 			</Dialog.Title>
 			<Dialog.Title
 				as='h4'
-				className='mb-4 text-base tablet:text-xl font-bold mt-8'
+				className='mb-4 text-[2rem] tablet:text-xl font-bold mt-8'
 			>
 				You need to stake {tournamentt.minimumStake} WCT to join the tournament
 			</Dialog.Title>

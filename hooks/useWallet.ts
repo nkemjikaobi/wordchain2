@@ -26,6 +26,7 @@ const useWallet = () => {
 		fetchContractTokenBalance,
 		fetchContractEthBalance,
 		checkIfAdmin,
+		fetchTokenPrice,
 
 		//state variables
 		address,
@@ -51,6 +52,7 @@ const useWallet = () => {
 		contractEthBalance,
 		contractTokenBalance,
 		isAdmin,
+		tokenPrice,
 	} = useContext(WalletContext);
 
 	return {
@@ -72,6 +74,7 @@ const useWallet = () => {
 		fetchContractTokenBalance,
 		fetchContractEthBalance,
 		checkIfAdmin,
+		fetchTokenPrice,
 
 		//state variables
 		address,
@@ -97,6 +100,7 @@ const useWallet = () => {
 		contractEthBalance,
 		contractTokenBalance,
 		isAdmin,
+		tokenPrice,
 	};
 };
 

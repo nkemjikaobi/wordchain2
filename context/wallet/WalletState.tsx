@@ -15,6 +15,7 @@ import {
 	CURRENT_TOURNAMENT,
 	FETCH_CONTRACT_ETH,
 	FETCH_CONTRACT_TOKENS,
+	FETCH_TOKEN_PRICE,
 } from '../types';
 import Web3 from 'web3';
 import Web3Modal from 'web3modal';
@@ -52,6 +53,7 @@ const WalletState = (props: any) => {
 		contractEthBalance: '0',
 		contractTokenBalance: '0',
 		isAdmin: false,
+		tokenPrice: 0,
 	};
 
 	const [state, dispatch] = useReducer(WalletReducer, initialState);
@@ -155,6 +157,7 @@ const WalletState = (props: any) => {
 				.call();
 
 			await checkIfAdmin(adminContract, state.address, router);
+			await fetchTokenPrice(stakingContract);
 
 			dispatch({
 				type: LOAD_CONTRACT,
@@ -399,6 +402,20 @@ const WalletState = (props: any) => {
 		}
 	};
 
+	const fetchTokenPrice = async (contract: any) => {
+		try {
+			const res = await contract.methods.tokensPerEth().call();
+
+			dispatch({
+				type: FETCH_TOKEN_PRICE,
+				payload: res,
+			});
+		} catch (error) {
+			setAlert((error as Error).message, NotificationType.ERROR);
+		}
+
+	}
+
 	//create tournament
 	const createTournament = async (
 		contract: any,
@@ -492,6 +509,7 @@ const WalletState = (props: any) => {
 				contractEthBalance: state.contractEthBalance,
 				contractTokenBalance: state.contractTokenBalance,
 				isAdmin: state.isAdmin,
+				tokenPrice: state.tokenPrice,
 				connectWallet,
 				disconnectWallet,
 				monitorAccountChanged,
@@ -509,6 +527,7 @@ const WalletState = (props: any) => {
 				fetchContractTokenBalance,
 				fetchContractEthBalance,
 				checkIfAdmin,
+				fetchTokenPrice,
 			}}
 		>
 			{props.children}

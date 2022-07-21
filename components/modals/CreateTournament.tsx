@@ -101,7 +101,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 				wordChainContract,
 				name,
 				description,
-				Number(duration)*60*24,
+				Number(duration),
 				stake,
 				isPrivate,
 				tournamentKey,
@@ -124,7 +124,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 		<div className='flex flex-col justify-center items-center'>
 			<Dialog.Title
 				as='h4'
-				className='mb-4 text-base tablet:text-xl font-bold mt-8'
+				className='mb-4 text-[2rem] tablet:text-xl font-bold mt-8'
 			>
 				Create Tournament
 			</Dialog.Title>

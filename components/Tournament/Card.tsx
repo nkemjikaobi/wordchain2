@@ -6,6 +6,7 @@ import Modal from '../Modal/Modal';
 import JoinTournament from '../modals/JoinTournament';
 import { ImSpinner9 } from 'react-icons/im';
 import { BsArrowRight } from 'react-icons/bs';
+import Moment from 'react-moment';
 
 import WalletReducer from '../../context/wallet/WalletReducer';
 import { CURRENT_TOURNAMENT } from '../../context/types';
@@ -34,8 +35,11 @@ const Card = ({ tournament }: any) => {
 	return (
 		<>
 			<div
-				className={`w-full h-full  bg-[#040B21] px-4 py-8  rounded-lg text-white flex flex-col justify-between !drop-shadow-[200px]`}
+				className={`w-full h-full  bg-[#040B21] px-4 py-8  rounded-lg text-white flex flex-col justify-between !drop-shadow-[200px] relative`}
 			>
+				<p className='absolute top-8 right-8 text-[0.5rem] align-right'>Deadline: <br/> {<Moment unix format='YYYY-MM-DD HH:mm UTC'>
+												{Number(tournament.deadline) - 3600}
+											</Moment>}</p>
 				<div className='mt-16'>
 					<div className='flex gap-[20px] items-center'>
 						<h2 className='font-bold text-[3rem] m-0'>{tournament.name}</h2>
@@ -44,7 +48,10 @@ const Card = ({ tournament }: any) => {
 					<p>{tournament.description}</p>
 				</div>
 				<div className='flex justify-between w-full items-center'>
-					<p>Number of Participants: {tournament.numberOfParticipants}</p>
+					<p className= 'text-[0.8rem] mr-4'>
+						Number of Participants: {tournament.numberOfParticipants} <br/>
+						Minimum Stake: {tournament.minimumStakeAmount} WCT
+					</p>
 					<button
 						onClick={() => {
 							handleClick();
@@ -67,7 +74,7 @@ const Card = ({ tournament }: any) => {
 			<Modal visibility={joinTournament} toggleVisibility={setJoinTournament}>
 				<JoinTournament
 					setCreatedTosetJoinTournamenturnament={setJoinTournament}
-					tournament={tournament}
+					tournamentt={tournament}
 				/>
 			</Modal>
 		</>
