@@ -23,13 +23,14 @@ const Wordle = () => {
 
 	useEffect(() => {
 		if (wordChainContract === null) {
-			// router.push("/dashboard");
+			router.push("/");
 		}
 		generateWords();
 		//eslint-disable-next-line
 	}, []);
 
 	useEffect(() => {
+		console.log(gameOver);
 		if(gameOver.gameOver) {
 			handleGameOver();
 		}

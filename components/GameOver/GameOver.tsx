@@ -1,10 +1,16 @@
 import useBoard from '../../hooks/useBoard';
 import React from 'react';
 import { useRouter } from 'next/router';
+import { generateWordSet } from '../../Words';
 
 const GameOver = () => {
-	const { currentAttempt, gameOver, correctWord } = useBoard();
+	const { currentAttempt, gameOver, correctWord, resetBoard, generateWords } = useBoard();
 	const router = useRouter();
+
+	const restartGame= () => {
+		resetBoard();
+		generateWords();
+	}
 	return (
 		<div className='text-white flex justify-center items-center flex-col mt-4 text-xl'>
 			<h3>
@@ -26,7 +32,7 @@ const GameOver = () => {
 					return to dashboard
 				</button>
 				<button
-					onClick={() => router.reload()}
+					onClick={restartGame}
 					className='border h-16 mt-8 text-sm border-[#0E1027] p-3 bg-[#0E1027] text-white w-36 rounded-md uppercase'
 				>
 					play again

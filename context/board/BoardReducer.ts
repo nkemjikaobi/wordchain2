@@ -1,3 +1,4 @@
+import { boardDefault } from '../../Words';
 import {
 	UPDATE_BOARD,
 	UPDATE_CURRENT_ATTEMPT,
@@ -5,6 +6,7 @@ import {
 	UPDATE_GAME_OVER,
 	UPDATE_CORRECT_WORD,
 	UPDATE_WORD_SET,
+	RESET_BOARD,
 } from '../types';
 
 const AuthReducer = (state: any, action: any) => {
@@ -39,6 +41,11 @@ const AuthReducer = (state: any, action: any) => {
 				...state,
 				correctWord: action.payload,
 			};
+		case RESET_BOARD:
+			return {
+				...state,
+				...action.payload,
+			}
 		default:
 			return state;
 	}

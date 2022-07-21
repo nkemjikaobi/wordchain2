@@ -14,6 +14,7 @@ const useBoard = () => {
 		updateDisabledLetters,
 		updateGameOver,
 		updateCorrectWord,
+		resetBoard,
 
 		// state variables
 		board,
@@ -36,6 +37,7 @@ const useBoard = () => {
 		updateDisabledLetters,
 		updateGameOver,
 		updateCorrectWord,
+		resetBoard,
 
 		// state variables
 		board,

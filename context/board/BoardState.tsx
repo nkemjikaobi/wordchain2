@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import BoardContext from './BoardContext';
 import BoardReducer from './BoardReducer';
 import {
+	RESET_BOARD,
 	UPDATE_BOARD,
 	UPDATE_CORRECT_WORD,
 	UPDATE_CURRENT_ATTEMPT,
@@ -27,6 +28,15 @@ const BoardState = (props: any) => {
 		},
 	};
 
+	const boardRenew = [
+		['', '', '', '', ''],
+		['', '', '', '', ''],
+		['', '', '', '', ''],
+		['', '', '', '', ''],
+		['', '', '', '', ''],
+		['', '', '', '', ''],
+	];
+
 	const [state, dispatch] = useReducer(BoardReducer, initialState);
 
 	const updateBoard = (newBoard: any) => {
@@ -42,6 +52,16 @@ const BoardState = (props: any) => {
 			payload: newAttempt,
 		});
 	};
+
+	const resetBoard = () => {
+		dispatch({
+			type: RESET_BOARD,
+			payload: {
+				...initialState,
+				board: boardRenew,
+			},
+		});
+	}
 
 	const onEnter = () => {
 		if (state.currentAttempt.letterPosition !== 5) return;
@@ -156,6 +176,7 @@ const BoardState = (props: any) => {
 				updateDisabledLetters,
 				updateGameOver,
 				updateCorrectWord,
+				resetBoard,
 			}}
 		>
 			{props.children}
