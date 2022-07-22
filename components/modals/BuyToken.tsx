@@ -36,9 +36,9 @@ const BuyToken = ({ setBuyToken }: any) => {
 			</Dialog.Title>
 			<Dialog.Title
 				as='h4'
-				className='mb-4 text-base tablet:text-2xl font-bold mt-8'
+				className='mb-4 text-base tablet:text-2xl font-bold mt-8 text-align-center'
 			>
-				{tokenPrice} WCT = 1 ETH
+				Enter amount of ETH to spend. {tokenPrice} WCT = 1 ETH
 			</Dialog.Title>
 			<div className='w-full'>
 				<input

@@ -10,6 +10,7 @@ import useWallet from '../../hooks/useWallet';
 const CreatedTournamentsPage = () => {
 	const [createTournament, setCreatedTournament] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
+	const [hasStartedJoin, setHasStartedJoin] = useState<boolean>(false);
 	
 	const { tournaments, address } = useWallet();
 	const [tournaments_, setTournaments_] = useState<any>();
@@ -61,9 +62,11 @@ const CreatedTournamentsPage = () => {
 			</div>
 			<Modal
 				visibility={createTournament}
-				toggleVisibility={setCreatedTournament}
+				toggleVisibility={(k: boolean) => !hasStartedJoin && setCreatedTournament(k)}
 			>
-				<CreateTournament setCreatedTournament={setCreatedTournament} isAdmin={false} />
+				<CreateTournament setCreatedTournament={setCreatedTournament} 
+				setHasStartedJoin={setHasStartedJoin} isAdmin={false} 
+				/>
 			</Modal>
 		</BasePageLayout>
 	);

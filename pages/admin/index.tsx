@@ -4,12 +4,14 @@ import AdminCard from '../../components/Tournament/AdminCard';
 import useWallet from '../../hooks/useWallet';
 import useAlert from '../../hooks/useAlert';
 import { NotificationType } from '../../constants';
+import { useRouter } from 'next/router';
 const AdminPage = () => {
 	const { users, tournaments, wordChainContract, fetchAllPlayers, address } = useWallet();
 	const [blackListedUsers, setBlackListedUsers] = useState();
 	const [pendingPayout, setPendingPayouts] = useState([]);
 	const [average, setAverage] = useState(0);
 	const { setAlert } = useAlert();
+	const router = useRouter();
 
 	useEffect(() => {
 		if (users && users.length > 0) {
@@ -32,10 +34,9 @@ const AdminPage = () => {
 		if (tournaments && tournaments.length > 0) {
 			const average = findAveragePlayers(tournaments);
 			setAverage(average);
-
 			const pendingPayouts = tournaments.filter(
 				(tournament: any) =>
-					tournament.deadline < new Date().getTime && tournament.totalStake > 0
+					Number(tournament.deadline) < new Date().getTime()/1000 && Number(tournament.totalStake) > 0
 			);
 			setPendingPayouts(pendingPayouts);
 		}
@@ -62,7 +63,7 @@ const AdminPage = () => {
 			});
 			
 			if (res.length === 0) {alert("No player in this tournament"); return;}
-			console.log(res);
+			
 			let worthy = res.filter((r: any) => r.gamesPlayed >= 20);
 			let playerstoReward: any[];
 
@@ -89,13 +90,11 @@ const AdminPage = () => {
 				playerstoReward = worthy.sort((a: any, b: any) => b.score - a.score)
 					.map((t: any) => t.add_).slice(0,3);
 			}
-			console.log(playerstoReward);
-			console.log(address);
+			
 			await wordChainContract.methods.dispatchRewards(tournament.id, playerstoReward[0], playerstoReward[1], playerstoReward[2])
 				.send({from: address});
 		} catch(error) {
-			console.log("Error");
-			// setAlert((error as Error).message, NotificationType.ERROR);
+			setAlert((error as Error).message, NotificationType.ERROR);
 		}
 	}
 
@@ -153,6 +152,7 @@ const AdminPage = () => {
 									pendingPayout.map((tournament: any, index: number) => (
 										<tr
 											key={index}
+											onClick= {() => router.push(`/admin/tournaments/${tournament.id}`)}
 											className='border-b-2 h-16 hover:bg-gray-200 text-gray-600 text-center'
 										>
 											<td className='text-[#0E1027]'>{tournament.name}</td>

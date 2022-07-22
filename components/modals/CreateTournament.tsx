@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import convertToWei from '../../helpers/convertToWei';
 import { NotificationType } from '../../constants';
 
-const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
+const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }: any) => {
 	const {
 		wordChainContract,
 		tokenContract,
@@ -22,6 +22,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 	const [isPrivate, setIsPrivate] = useState(false);
 	const [hasApproved, setHasApproved] = useState(false);
 	const [hasStaked, setHasStaked] = useState(false);
+	const [hasCreated, setHasCreated] = useState(false);
 	const [tournament, setTournament] = useState({
 		name: '',
 		description: '',
@@ -39,7 +40,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 			return showToast('Please fill in all fields', 'error');
 		}
 
-		console.log({tokenBalance, stake: tournament.stake})
+		
 		const { stake } = tournament;
 		if (Number(tokenBalance) < Number(stake)) return showToast('Insufficent tokens', 'error');
 
@@ -48,9 +49,11 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 			await tokenContract.methods
 				.approve(stakingContract._address, convertToWei(web3, stake))
 				.send({ from: address });
+			setHasStartedJoin(true);
 			setHasApproved(true);
 			showToast('Approved', NotificationType.SUCCESS);
 		} catch (error) {
+			setLoading(false);
 			showToast((error as Error).message, NotificationType.ERROR);
 		}
 
@@ -77,6 +80,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 			setHasStaked(true);
 			showToast('Staked', NotificationType.SUCCESS);
 		} catch (error) {
+			setLoading(false);
 			showToast((error as Error).message, NotificationType.ERROR);
 		}
 
@@ -107,8 +111,9 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 				tournamentKey,
 				address
 			);
-			setCreatedTournament(false);
+			isAdmin ? setCreatedTournament(false) : setHasCreated(true);
 		} catch (error) {
+			setLoading(false);
 			showToast((error as Error).message, NotificationType.ERROR);
 		}
 
@@ -122,7 +127,10 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 
 	return (
 		<div className='flex flex-col justify-center items-center'>
-			<Dialog.Title
+			{hasCreated ? (
+				isPrivate ? <p className='text-center text-[0.8rem]'>Copy your Tournament ID and share it with your friends to join your private tournament.<br/>
+				{tournament.tournamentKey}</p> : <p>Tournament created.</p>
+			) : (<><Dialog.Title
 				as='h4'
 				className='mb-4 text-[2rem] tablet:text-xl font-bold mt-8'
 			>
@@ -176,7 +184,8 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 					checked={isPrivate}
 					onChange={e => setIsPrivate(e.target.checked)}
 				/>
-			</div>
+			</div></>)}
+			
 			{isAdmin && 
 				 <button
 				 onClick={handleCreate}
@@ -195,7 +204,8 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 			 </button>
 
 			}
-			{!isAdmin && !hasApproved && (
+			{!isAdmin && !hasApproved && (<>
+				<p className='text-center text-[0.8rem]'>You would need to approve, and stake, at least the minimum stake before creating tournament</p>
 				<button
 					onClick={handleApprove}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
@@ -210,7 +220,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 							Approve {tournament.stake} WCT <BsArrowRight className='ml-4' />
 						</>
 					)}
-				</button>
+				</button></>
 			)}
 			{!isAdmin && hasApproved && !hasStaked && (
 				<button
@@ -229,7 +239,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 					)}
 				</button>
 			)}
-			{!isAdmin && hasApproved && hasStaked && (
+			{!isAdmin && hasApproved && hasStaked && !hasCreated && (
 				<button
 					onClick={handleCreate}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
@@ -244,6 +254,14 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin }: any) => {
 							Create Tournament <BsArrowRight className='ml-4' />
 						</>
 					)}
+				</button>
+			)}
+			{!isAdmin && hasApproved && hasStaked && hasCreated && (
+				<button
+					onClick={()=> setCreatedTournament(false)}
+					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
+				>
+					OK
 				</button>
 			)}
 		</div>

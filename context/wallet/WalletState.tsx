@@ -235,7 +235,6 @@ const WalletState = (props: any) => {
 	const fetchAllTournaments = async (contract: any) => {
 		try {
 			const res = await contract.methods.getAllTournaments().call();
-
 			let tournaments: any = [];
 			res.map((dat: any) => {
 				let item: any = {};

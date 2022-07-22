@@ -4,6 +4,7 @@ import { ImSpinner9 } from 'react-icons/im';
 import React, { useEffect, useState } from 'react';
 import AdminPageLayout from '../../../../components/AdminPageLayout/AdminPageLayout';
 import useWallet from '../../../../hooks/useWallet';
+import Moment from 'react-moment';
 
 const SingleTournamentPage = ({ id }: any) => {
 	const { fetchAllPlayers, wordChainContract, tournaments, players } =
@@ -45,6 +46,15 @@ const SingleTournamentPage = ({ id }: any) => {
 					<p className='text-center'>
 						Number of Participants: <span>{players && players.length}</span>
 					</p>
+					<p className='text-center'>Total Stake: <span className= 'font-bold'>{tournaments[0].totalStake} WCT</span></p>
+					
+				</div>
+				<div className='flex items-center justify-between text-[0.8rem]'>
+					<p>Minimum Stake: {tournaments[id].minimumStakeAmount} WCT</p>
+					<p>Deadline: <Moment unix format='YYYY-MM-DD HH:mm UTC'>
+						{Number(tournaments[id].deadline) - 3600}
+					</Moment>
+					</p>
 				</div>
 				{players ? (
 					<table className='table-auto mt-8 w-full '>
@@ -69,7 +79,7 @@ const SingleTournamentPage = ({ id }: any) => {
 										>
 											<td className='text-[#0E1027]'>{index + 1}</td>
 											<td className='text-[#0E1027]'>{player.username}</td>
-											<td className='text-[#0E1027]'>{player.score}</td>
+											<td className='text-[#0E1027]'>{player.score.toFixed(2)}</td>
 											<td className='text-[#0E1027]'>{player.gamesPlayed}</td>
 										</tr>
 									))}
