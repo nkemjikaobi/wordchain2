@@ -1,34 +1,27 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# WordChain
 
-## Getting Started
+Implementation of the popular Wordle puzzle for staking and rewards on the Ethereum BlockChain
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+# Live URL
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+https://wordchain2.vercel.app/
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+# Smart Contract Source Code
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+https://github.com/leonardokhorliey/wordchain
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+# Background
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The Wordle concept puzzle game was earlier delivered by NYTimes and trended vastly across various Social Media globally. The basic operation is for a user to guess a 5-letter word within 6 guesses/tries. Over thousands of people played and shared their scores online via the graphical score share provided to `show off` their vocabulary aptitude.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+WordChain brings this simple implementation to the BlockChain, providing users worldwide the ability to stake WordChainTokens, for a particular tournament duration, while playing rounds of Wordle against other users around the world. Users can create and play private, for close friends in a group, and public tournaments with a minimum required stake, which other users can join after staking this minimum required.
 
-## Deploy on Vercel
+When the tournament reaches the deadline, the staked tokens are distributed between the top three contestants for the tournament.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# Note
+
+WordChain is soon going live on the Ethereum Mainnet.
