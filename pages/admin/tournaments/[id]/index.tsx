@@ -70,8 +70,9 @@ const SingleTournamentPage = ({ id }: any) => {
 						<tbody className='text-xl '>
 							{players &&
 								players
+								.sort((a: any, b: any) => b.gamesPlayed - a.gamesPlayed)
 									.sort((a: any, b: any) => b.score - a.score)
-									.sort((a: any, b: any) => b.gamesPlayed - a.gamesPlayed)
+									
 									.map((player: any, index: any) => (
 										<tr
 											key={index}

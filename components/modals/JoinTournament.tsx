@@ -81,7 +81,7 @@ const JoinTournament = ({
 		setLoading(true);
 		try {
 			await stakingContract.methods
-				.stakeToken(stake, tournamentKey)
+				.stakeToken(stake, tournamentt.tournamentKey)
 				.send({ from: address });
 			setHasStaked(true);
 			showToast('Staked', NotificationType.SUCCESS);
@@ -149,7 +149,7 @@ const JoinTournament = ({
 					onChange={handleChange}
 				/>
 			</div>
-			{!keyChecked && <button
+			{!hasApproved && <button
 				onClick={keyChecked ? handleApprove : handleCheckKey}
 				className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
 			>
