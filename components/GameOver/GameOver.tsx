@@ -1,7 +1,6 @@
 import useBoard from '../../hooks/useBoard';
 import React from 'react';
 import { useRouter } from 'next/router';
-import { generateWordSet } from '../../Words';
 
 const GameOver = () => {
 	const { currentAttempt, gameOver, correctWord, resetBoard, generateWords } = useBoard();
@@ -25,6 +24,7 @@ const GameOver = () => {
 			<div className='flex items-center'>
 				<button
 					onClick={() => {
+						resetBoard();
 						router.push('/dashboard');
 					}}
 					className='border text-sm mr-12 mt-8 border-[#0E1027] p-3 bg-[#0E1027] text-white w-36 rounded-md uppercase'
