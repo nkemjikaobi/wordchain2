@@ -12,7 +12,7 @@ import { ImSpinner9 } from 'react-icons/im';
 const Wordle = () => {
 	const [isSendingScore, setIsSendingScore] = useState(false);
 	const router = useRouter();
-	const { gameOver, generateWords, currentAttempt } = useBoard();
+	const { gameOver, generateWords, resetBoard, currentAttempt } = useBoard();
 	const { currentTournament, players, address, sendScore, wordChainContract } =
 		useWallet();
 
@@ -20,7 +20,6 @@ const Wordle = () => {
 		let playerTournamentId = players.filter(
 			(t: any) => t.address === address
 		)[0].id;
-		console.log({ playerTournamentId });
 
 		try {
 			setIsSendingScore(true);
@@ -54,6 +53,10 @@ const Wordle = () => {
 			router.push('/');
 		}
 		generateWords();
+
+		return () => {
+			resetBoard();
+		};
 		//eslint-disable-next-line
 	}, []);
 

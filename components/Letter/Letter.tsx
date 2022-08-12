@@ -18,6 +18,7 @@ const Letter = ({ letterPosition, attemptPosition }: any) => {
 		if (letter !== '' && !correct && !almost) {
 			updateDisabledLetters(letter);
 		}
+		//eslint-disable-next-line
 	}, [currentAttempt.attempt]);
 
 	return (
