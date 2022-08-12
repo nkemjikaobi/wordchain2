@@ -7,8 +7,14 @@ import showToast from '../../helpers/showToast';
 import { v4 as uuidv4 } from 'uuid';
 import convertToWei from '../../helpers/convertToWei';
 import { NotificationType } from '../../constants';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import toast from 'react-hot-toast';
 
-const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }: any) => {
+const CreatedTournament = ({
+	setCreatedTournament,
+	isAdmin,
+	setHasStartedJoin,
+}: any) => {
 	const {
 		wordChainContract,
 		tokenContract,
@@ -16,9 +22,10 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }:
 		stakingContract,
 		address,
 		web3,
+		createTournament,
+		fetchAllTournaments,
 	} = useWallet();
 	const [loading, setLoading] = useState<boolean>(false);
-	const { createTournament } = useWallet();
 	const [isPrivate, setIsPrivate] = useState(false);
 	const [hasApproved, setHasApproved] = useState(false);
 	const [hasStaked, setHasStaked] = useState(false);
@@ -40,9 +47,9 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }:
 			return showToast('Please fill in all fields', 'error');
 		}
 
-		
 		const { stake } = tournament;
-		if (Number(tokenBalance) < Number(stake)) return showToast('Insufficent tokens', 'error');
+		if (Number(tokenBalance) < Number(stake))
+			return showToast('Insufficent tokens', 'error');
 
 		setLoading(true);
 		try {
@@ -70,7 +77,8 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }:
 		}
 
 		const { stake, tournamentKey } = tournament;
-		if (Number(tokenBalance) < Number(stake)) return showToast('Insufficent tokens', 'error');
+		if (Number(tokenBalance) < Number(stake))
+			return showToast('Insufficent tokens', 'error');
 
 		setLoading(true);
 		try {
@@ -105,12 +113,13 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }:
 				wordChainContract,
 				name,
 				description,
-				Number(duration)*60*24,
+				Number(duration) * 60 * 24,
 				stake,
 				isPrivate,
 				tournamentKey,
 				address
 			);
+			fetchAllTournaments(wordChainContract);
 			isAdmin ? setCreatedTournament(false) : setHasCreated(true);
 		} catch (error) {
 			setLoading(false);
@@ -128,99 +137,124 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }:
 	return (
 		<div className='flex flex-col justify-center items-center'>
 			{hasCreated ? (
-				isPrivate ? <p className='text-center text-[0.8rem]'>Copy your Tournament ID and share it with your friends to join your private tournament.<br/>
-				{tournament.tournamentKey}</p> : <p>Tournament created.</p>
-			) : (<><Dialog.Title
-				as='h4'
-				className='mb-4 text-[2rem] tablet:text-xl font-bold mt-8'
-			>
-				Create Tournament
-			</Dialog.Title>
-			<div className='w-full'>
-				<input
-					placeholder='name of tournament'
-					className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
-					type='text'
-					name='name'
-					value={tournament.name}
-					onChange={handleChange}
-				/>
-			</div>
-			<div className='w-full'>
-				<input
-					placeholder='description of tournament'
-					className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
-					type='text'
-					name='description'
-					value={tournament.description}
-					onChange={handleChange}
-				/>
-			</div>
-			<div className='w-full'>
-				<input
-					placeholder='duration (in days)'
-					className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
-					type='text'
-					name='duration'
-					value={tournament.duration}
-					onChange={handleChange}
-				/>
-			</div>
-			<div className='w-full'>
-				<input
-					placeholder='minimum amount to stake (in WCT)'
-					className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
-					type='text'
-					name='stake'
-					value={tournament.stake}
-					onChange={handleChange}
-				/>
-			</div>
-			<div className='flex items-baseline justify-center'>
-				<label className='mr-4'>IsPrivate</label>
-				<input
-					className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
-					type='checkbox'
-					checked={isPrivate}
-					onChange={e => setIsPrivate(e.target.checked)}
-				/>
-			</div></>)}
-			
-			{isAdmin && 
-				 <button
-				 onClick={handleCreate}
-				 className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
-			 >
-				 {loading ? (
-					 <>
-						 <ImSpinner9 className='animate-spin h-5 w-5 mr-3' />
-						 Creating...
-					 </>
-				 ) : (
-					 <>
-						 Create Tournament <BsArrowRight className='ml-4' />
-					 </>
-				 )}
-			 </button>
+				isPrivate ? (
+					<CopyToClipboard
+						onCopy={() => {
+							toast.success('Tournament Key Copied');
+						}}
+						text={tournament.tournamentKey}
+					>
+						<p className='text-center text-[0.8rem]'>
+							Copy your Tournament ID and share it with your friends to join
+							your private tournament.
+							<br />
+							<span className='mt-2 cursor-pointer hover:text-[#498feb]'>
+								{tournament.tournamentKey}
+							</span>
+						</p>
+					</CopyToClipboard>
+				) : (
+					<p>Tournament created.</p>
+		)
+			) : (
+				<>
+					<Dialog.Title
+						as='h4'
+						className='mb-4 text-[2rem] tablet:text-xl font-bold mt-8'
+					>
+						Create Tournament
+					</Dialog.Title>
+					<div className='w-full'>
+						<input
+							placeholder='name of tournament'
+							className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
+							type='text'
+							name='name'
+							value={tournament.name}
+							onChange={handleChange}
+						/>
+					</div>
+					<div className='w-full'>
+						<input
+							placeholder='description of tournament'
+							className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
+							type='text'
+							name='description'
+							value={tournament.description}
+							onChange={handleChange}
+						/>
+					</div>
+					<div className='w-full'>
+						<input
+							placeholder='duration (in days)'
+							className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
+							type='text'
+							name='duration'
+							value={tournament.duration}
+							onChange={handleChange}
+						/>
+					</div>
+					<div className='w-full'>
+						<input
+							placeholder='minimum amount to stake (in WCT)'
+							className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
+							type='text'
+							name='stake'
+							value={tournament.stake}
+							onChange={handleChange}
+						/>
+					</div>
+					<div className='flex items-baseline justify-center'>
+						<label className='mr-4'>IsPrivate</label>
+						<input
+							className='text-black p-5 border border-gray-300 rounded-md w-full mb-4 focus:border-black focus:outline-black'
+							type='checkbox'
+							checked={isPrivate}
+							onChange={e => setIsPrivate(e.target.checked)}
+						/>
+					</div>
+				</>
+			)}
 
-			}
-			{!isAdmin && !hasApproved && (<>
-				<p className='text-center text-[0.8rem]'>You would need to approve, and stake, at least the minimum stake before creating tournament</p>
+			{isAdmin && (
 				<button
-					onClick={handleApprove}
+					onClick={handleCreate}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
 				>
 					{loading ? (
 						<>
 							<ImSpinner9 className='animate-spin h-5 w-5 mr-3' />
-							Approving...
+							Creating...
 						</>
 					) : (
 						<>
-							Approve {tournament.stake} WCT <BsArrowRight className='ml-4' />
+							Create Tournament <BsArrowRight className='ml-4' />
 						</>
 					)}
-				</button></>
+				</button>
+			)}
+			{!isAdmin && !hasApproved && (
+				<>
+					<p className='text-center text-[0.8rem]'>
+						You would need to approve, and stake, at least the minimum stake
+						before creating tournament
+					</p>
+					<button
+						onClick={handleApprove}
+						className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
+					>
+						{loading ? (
+							<>
+								<ImSpinner9 className='animate-spin h-5 w-5 mr-3' />
+								Approving...
+							</>
+						) : (
+							<>
+								Approve {tournament.stake} WCT <BsArrowRight className='ml-4' />
+							</>
+						)}
+					</button>
+				</>
 			)}
 			{!isAdmin && hasApproved && !hasStaked && (
 				<button
@@ -258,7 +292,7 @@ const CreatedTournament = ({ setCreatedTournament, isAdmin, setHasStartedJoin }:
 			)}
 			{!isAdmin && hasApproved && hasStaked && hasCreated && (
 				<button
-					onClick={()=> setCreatedTournament(false)}
+					onClick={() => setCreatedTournament(false)}
 					className='flex justify-center items-center mt-10 bg-[#0E1027] w-48 px-5 py-3 text-base rounded-lg hover:bg-slate-900'
 				>
 					OK

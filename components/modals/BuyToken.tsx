@@ -8,7 +8,8 @@ import { ImSpinner9 } from 'react-icons/im';
 import convertToWei from '../../helpers/convertToWei';
 
 const BuyToken = ({ setBuyToken }: any) => {
-	const { stakingContract, address, web3, tokenPrice } = useWallet();
+	const { stakingContract, address, web3, tokenPrice, connectWallet } =
+		useWallet();
 	const [loading, setLoading] = useState<boolean>(false);
 	const [amount, setAmount] = useState('0.01');
 
@@ -20,6 +21,7 @@ const BuyToken = ({ setBuyToken }: any) => {
 			await stakingContract.methods
 				.buyTokens()
 				.send({ from: address, value: convertToWei(web3, amount) });
+			connectWallet();
 			setBuyToken(false);
 		} catch (error) {
 			showToast((error as Error).message, NotificationType.ERROR);
@@ -61,7 +63,8 @@ const BuyToken = ({ setBuyToken }: any) => {
 					</>
 				) : (
 					<>
-						Buy {Number(amount) * tokenPrice} WCT <BsArrowRight className='ml-4' />
+						Buy {Number(amount) * tokenPrice} WCT{' '}
+						<BsArrowRight className='ml-4' />
 					</>
 				)}
 			</button>

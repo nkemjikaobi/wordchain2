@@ -19,6 +19,7 @@ const CreatedTournamentsPage = () => {
 		if(tournaments !== null) {
 			setTournaments_(tournaments.filter((t: any) => t.owner === address))
 		}
+		//eslint-disable-next-line
 	}, [tournaments]);
 
 	useEffect(() => {
